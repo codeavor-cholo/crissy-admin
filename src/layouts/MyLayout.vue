@@ -1,6 +1,6 @@
 <template>
-  <q-layout view="hHh lpR fFf" class="bg-grey-1">
-    <q-header elevated class="bg-purple text-white" style="background-color: #fc000d" height-hint="64">
+  <q-layout view="hHh lpR fFf" class="bg-grey-4">
+    <q-header elevated class="bg-grey-8 text-white" style="background-color: #fc000d" height-hint="64">
       <q-toolbar class="GNL__toolbar">
         <q-btn
           flat
@@ -11,15 +11,19 @@
           icon="menu"
           class="q-mr-sm"
         />
-
+        <q-img
+          src="statics/logo.png"
+          :ratio="1"
+          style="width:3.5em;"
+          class="q-ml-sm"
+        />
         <q-toolbar-title v-if="$q.screen.gt.xs" shrink class="row items-center no-wrap">
-          <!-- <img src="https://cdn.quasar.dev/img/layout-gallery/logo-google.svg"> -->
-          <span class="q-ml-sm">Crissy's Meal Magic Catering Services</span>
+          <span>Crissy's Meal Magic Catering Services</span>
         </q-toolbar-title>
 
         <q-space />
 
-        <q-input class="GNL__toolbar-input" outlined dense v-model="search" color="bg-white " placeholder="Search for topics, locations & sources">
+        <!-- <q-input class="GNL__toolbar-input text-white" outlined dense v-model="search" color="white" placeholder="Search for topics, locations & sources">
           <template v-slot:prepend>
             <q-icon v-if="search === ''" color="white" name="search" />
             <q-icon v-else name="clear" color="white" class="cursor-pointer" @click="search = ''" />
@@ -76,7 +80,7 @@
               </q-menu>
             </q-btn>
           </template>
-        </q-input>
+        </q-input> -->
 
         <q-space />
 
@@ -85,7 +89,7 @@
             <q-tooltip>Google Apps</q-tooltip>
           </q-btn>
           <q-btn round dense flat color="white" icon="notifications">
-            <q-badge color="blue" text-color="white" floating>
+            <q-badge color="orange-8" text-color="white" floating>
               2
             </q-badge>
             <q-tooltip>Notifications</q-tooltip>
@@ -105,14 +109,13 @@
       show-if-above
       bordered
       content-class="bg-white"
-      :width="280"
-      overlay
+      :width="300"
     >
       <q-scroll-area class="fit">
-        <q-list padding class="text-purple">
+        <q-list padding class="text-orange-8">
           <q-item @click="filterDashboard(link)" class="GNL__drawer-item" v-ripple v-for="link in links1" :key="link.text" clickable>
             <q-item-section avatar>
-              <q-icon class="text-purple" :name="link.icon" />
+              <q-icon class="text-orange-8" :name="link.icon" />
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ link.text }}</q-item-label>
@@ -123,7 +126,7 @@
           <q-expansion-item :content-inset-level="0.5" icon="settings" label="File Maintenance"  default-close>
           <q-item @click="filterDashboardII(link)" class="GNL__drawer-item" v-ripple v-for="link in links2" :key="link.text" clickable>
             <q-item-section avatar>
-              <q-icon class="text-purple" :name="link.icon" />
+              <q-icon class="text-orange-8" :name="link.icon" />
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ link.text }}</q-item-label>
