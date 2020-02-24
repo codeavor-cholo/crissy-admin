@@ -1,0 +1,36 @@
+{
+  "name": "itstimmy1",
+  "version": "0.0.1",
+  "description": "A Quasar Framework app",
+  "productName": "Quasar App",
+  "cordovaId": "org.cordova.quasar.app",
+  "capacitorId": "",
+  "author": "itsme",
+  "private": true,
+  "scripts": {
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.5.1",
+    "apexcharts": "^3.15.0",
+    "axios": "^0.18.1",
+    "firebase": "^7.6.2",
+    "lodash": "^4.17.15",
+    "quasar": "^1.0.0",
+    "simple-random-id": "^1.0.1",
+    "vue-apexcharts": "^1.5.2",
+    "vue-chart-js": "^1.4.1",
+    "vue-firestore": "^0.3.22"
+  },
+  "devDependencies": {
+    "@quasar/app": "^1.0.0"
+  },
+  "engines": {
+    "node": ">= 8.9.0",
+    "npm": ">= 5.6.0",
+    "yarn": ">= 1.6.0"
+  },
+  "browserslist": [
+    "last 1 version, not dead, ie >= 11"
+  ]
+}
