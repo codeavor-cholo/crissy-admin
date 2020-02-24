@@ -1,46 +1,38 @@
 <template>
-    <q-page>
+    <q-page padding="">
         <template>
                  <q-page-sticky position="bottom-right" :offset="[80, 10]">
-                    <q-btn label="Add New Food" icon="add" color="accent" @click="addFoodDialog = true" />
+                    <q-btn label="Add New Food" icon="add" color="orange-8" @click="addFoodDialog = true" />
                         <q-tooltip>
                             Add Food
                         </q-tooltip>
                 </q-page-sticky>
                     <div>
-                        <q-table grid :data="Food" :columns="columns" :pagination="pagination" :filter="filter" class="q-px-sm full-width align-center ">
+                        <q-table grid :data="Food" :columns="columns" :pagination.sync="pagination" :filter="filter" class="q-px-sm full-width align-center ">
                             <template v-slot:item="props">
                                 
-                                <div class="q-pa-xs col-xs-12 col-sm-6 col-md-3 col-lg-3 grid-style-transition q-ma-sm" :style="props.selected ? 'transform: scale(0.95);' : ''">
-                                    <q-card class="my-card" style="border: 2px solid;border-color: purple;" >
+                                <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3 grid-style-transition q-ma-sm" :style="props.selected ? 'transform: scale(0.95);' : ''">
+                                    <q-card class="my-card"  style="border-radius:20px" >
                                         <div>
-                                        <q-card-section>
-                                            <q-img :src="props.row.foodPic" :ratio="4/3">
-                                                <q-btn round color="teal" icon="mdi-pencil">
-                                                    <q-tooltip>
-                                                        Edit Food
-                                                    </q-tooltip>  
-                                                </q-btn> 
+                                            <q-img :src="props.row.foodPic" :ratio="3/2" style="border-radius:20px 20px 0 0">
                                             </q-img>
-                                        </q-card-section>
-                                        <q-card-section side>
+                                        <q-card-section class="q-px-none">
                                             <q-list dense>
-                                            <q-item v-for="col in props.cols.filter(col => col.name !== 'desc')" :key="col.name">
+                                            <q-item v-for="col in props.cols.filter(col => col.name !== 'desc')" :key="col.name" v-show="col.name != 'foodPrice'">
                                                 <q-item-section dense>
-                                                <q-item-label lines="1" overline>{{ col.label }}</q-item-label>
+                                                <q-item-label lines="1">{{ col.label }}</q-item-label>
                                                 </q-item-section>
                                                 <q-item-section side dense>
-                                                <q-item-label lines="2" caption>{{ col.value }}</q-item-label>
+                                                <q-item-label lines="2">{{ col.value }}</q-item-label>
                                                 </q-item-section>
                                             </q-item>
                                         </q-list>
                                         </q-card-section>
-                                        <q-card-section align="center">
-                                             <span class="text-grey-8 weight-bold">Description</span>
-                                        </q-card-section>
-                                        <q-card-section align="center">
-                                             <b>{{props.row.foodDescription}}</b>
-                                        </q-card-section>
+                                        <q-separator  inset />
+                                        <q-card-actions align="center" class=" q-pb-md">
+                                            <q-btn flat label="EDIT" icon="edit" color="green"/>
+                                            <q-btn flat label="DELETE" icon="delete"/>
+                                        </q-card-actions>
                                         </div>
                                     </q-card>
                                 </div>
@@ -56,18 +48,18 @@
 
                 <q-card-section class="q-pa-md">
                 
-                <q-input color="purple" outlined class="q-ma-md" dense v-model="foodNames" label="Food Name"/>
+                <q-input color="orange-8" class="q-ma-md" v-model="foodNames" label="Food Name"/>
                 <div class="container row q-ma-md">
-                <q-select color="purple" class="q-mr-md col" dense @input="foodPriceByCategory" outlined v-model="selectCategory" :options="categoryOpt" emit-value map-options label="Select Category" />
-                <q-input color="purple" outlined class="col-3" type="number" readonly dense v-model="foodPrice" label="Food Price"/>
+                <q-select color="orange-8" class="q-mr-md col" @input="foodPriceByCategory" v-model="selectCategory" :options="categoryOpt" emit-value map-options label="Select Category" />
+                <q-input color="orange-8" class="col-3" type="number" readonly v-model="foodPrice" label="Food Price"/>
                 </div>
-                <q-input v-model="description" outlined dense class="q-ma-md" color="purple" label="Food Description" filled type="textarea" />
-                <q-uploader ref="foodref" class="q-ma-md" extensions="'.gif,.GIF,.jpg,.JPG,.jpeg,.JPEG,.png,.PNG'" @added="photoAdded" :url="foodpic" label="Upload Photo" color="purple" square flat bordered style="width: 500px; border-color: pink" />
+                <q-input v-model="description" class="q-ma-md" color="orange-8" label="Food Description" filled type="textarea" />
+                <q-uploader ref="foodref" class="q-ma-md" extensions="'.gif,.GIF,.jpg,.JPG,.jpeg,.JPEG,.png,.PNG'" @added="photoAdded" :url="foodpic" label="Upload Photo" color="orange-8" style="width: 400px;" />
                 </q-card-section> 
 
                 <q-card-actions align="right" class="text-primary">
                 <q-btn flat label="Cancel" v-close-popup color="grey-8" />
-                <q-btn flat label="Add Food" @click="addFood" color="pink-3" v-close-popup />
+                <q-btn flat label="Add Food" @click="addFood" color="orange-8" v-close-popup />
                 <!-- <q-btn flat label="merge Food" @click="mergePricing" color="pink-3" /> -->
                 </q-card-actions>
             </q-card>
@@ -98,6 +90,7 @@ export default {
                 { name: 'foodName', align: 'center', label: 'Food Name', field: 'foodName', sortable: true },
                 { name: 'category', required: true, label: 'Food Category', align: 'center', field: 'category', sortable: true },
                 { name: 'foodPrice', align: 'center', label: 'Food Price', field: 'foodPrice', sortable: true },
+                { name: 'description', align: 'center', label: 'Description', field: 'foodDescription', sortable: true },
 
             ]
         }
@@ -165,6 +158,7 @@ export default {
                     title: 'Add Food',
                     message: 'Add This Food?',
                     ok: 'Yes',
+                    color:'orange-8',
                     cancel: 'Cancel',
                     persistent: true
                   }).onOk(() => {
@@ -182,7 +176,7 @@ export default {
                             this.$q.notify({
                                   message: 'Food Added!',
                                   icon: 'mdi-folder-plus-outline',
-                                  color: 'pink-3',
+                                  color: 'orange-8',
                                   textColor: 'white',
                                   position: 'center'
                               })
