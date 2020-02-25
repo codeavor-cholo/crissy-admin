@@ -94,12 +94,28 @@
             </q-badge>
             <q-tooltip>Notifications</q-tooltip>
           </q-btn>
-          <q-btn round flat>
-            <q-avatar size="26px">
-              <img src="https://cdn.quasar.dev/img/boy-avatar.png">
-            </q-avatar>
-            <q-tooltip>Account</q-tooltip>
-          </q-btn>
+          <q-btn-dropdown round flat>
+
+              <template v-slot:label>
+                <q-avatar size="26px">
+                  <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+                </q-avatar>
+                <span class="q-ml-md">Admin</span>
+              </template>
+                  <q-list>
+              <q-item clickable v-close-popup @click="onItemClick">
+                <q-item-section>
+                  <q-item-label>Account Settings</q-item-label>
+                </q-item-section>
+              </q-item>
+
+              <q-item clickable v-close-popup @click="logout">
+                <q-item-section>
+                  <q-item-label>Logout</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </div>
       </q-toolbar>
     </q-header>
@@ -162,6 +178,7 @@
 
 <script>
 import { fasGlobeAmericas, fasFlask } from '@quasar/extras/fontawesome-v5'
+import { QSpinnerFacebook } from 'quasar'
 export default {
   name: 'GoogleNewsLayout',
   data () {
@@ -177,7 +194,7 @@ export default {
       byDate: 'Any time',
       links1: [
         { icon: 'mdi-walk', text: 'Walk-In Reservation' },
-        { icon: 'dashboard', text: 'DashBoard' },
+        { icon: 'dashboard', text: 'Dashboard' },
         { icon: 'mdi-calendar', text: 'Reservation' },
         { icon: 'search', text: 'Saved searches' }
       ],
@@ -259,6 +276,41 @@ export default {
     changeDate (option) {
       this.byDate = option
       this.showDateOptions = false
+    },
+      logout(){
+      this.$q.dialog({
+                title: `Are you sure you want to logout?`,
+                type: 'orange-8',
+                color: 'orange-8',
+                textColor: 'white',
+                icon: 'info',
+                ok: 'Ok',
+                cancel: 'Cancel'
+                
+            }).onOk(()=>{
+                    /* This is for Codepen (using UMD) to work */
+                  const spinner = typeof QSpinnerFacebook !== 'undefined'
+                    ? QSpinnerFacebook // Non-UMD, imported above
+                    : Quasar.components.QSpinnerFacebook // eslint-disable-line
+                  /* End of Codepen workaround */
+                  this.$q.loading.show({
+                  message: 'Logging out',
+                  spinner,
+                  spinnerColor: 'orange-8',
+                  backgroundColor: 'grey-10',
+                  messageColor: 'orange-8'
+                  })
+                  this.timer = setTimeout(() => {
+                  this.$q.loading.hide()
+                  this.timer = void 0
+                  }, 2000)  
+                  // hiding in 3s  
+                    this.$firebase.auth().signOut()
+                    .then(() => {
+                    this.$router.push('/')
+                  })
+            })
+            
     }
   }
 }
