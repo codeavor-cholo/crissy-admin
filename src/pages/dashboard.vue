@@ -1,5 +1,5 @@
 <template>
-    <q-page class="flex flex-center">
+    <q-page class="q-pa-xl">
     <div class="row items-start q-gutter-md">
         <q-card bordered class="my-card bg-orange-8 text-white col">
             <div class="q-pa-md row items-start q-gutter-md">
