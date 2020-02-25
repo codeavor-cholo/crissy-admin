@@ -136,6 +136,7 @@ import { date } from 'quasar'
 export default {
   data () {
     return {
+        pax: 0,
         endtime: date.formatDate(new Date(), '10:50'),
         starttime: date.formatDate(new Date(), '12:50'),
         Motif: [],

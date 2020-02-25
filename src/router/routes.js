@@ -17,6 +17,8 @@ const routes = [
       { path: '/event', meta: {requiredAuth: true}, name: 'event', component: () => import('pages/event.vue') },
       { path: '/position', meta: {requiredAuth: true}, name: 'position', component: () => import('pages/position.vue') },
       { path: '/packages', meta: {requiredAuth: true}, name: 'packages', component: () => import('pages/packages.vue') },
+      { path: '/freebies', meta: {requiredAuth: true}, name: 'freebies', component: () => import('pages/freebies.vue') },
+      { path: '/extras', meta: {requiredAuth: true}, name: 'extras', component: () => import('pages/extras.vue') },
     ]
   },
   { path: '/', component: () => import('pages/login.vue') },
