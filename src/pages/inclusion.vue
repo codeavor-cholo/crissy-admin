@@ -7,7 +7,7 @@
                                             <q-list>
                                                 <q-item>
                                                     <q-item-section>
-                                                        <q-item-label class="text-h6"> {{props.row.inclusion}} <b class="float-right text-orange-8">{{props.row.price}}php</b></q-item-label>
+                                                        <q-item-label class="text-h6"> {{props.row.inclusion}}</q-item-label>
                                                     </q-item-section>
                                                 </q-item>
                                             </q-list>
@@ -44,7 +44,7 @@
 
                 <q-card-section>
                     <q-input class="q-ma-sm" outlined color="orange-8" v-model="inclusion" label="Inclusion"/>
-                    <q-input type="number" class="q-ma-sm" outlined color="orange-8" v-model="price" label="Price"/>
+                    <!-- <q-input type="number" class="q-ma-sm" outlined color="orange-8" v-model="price" label="Price"/> -->
                 </q-card-section>
 
                 <q-card-actions align="right" class="text-primary">
@@ -70,12 +70,12 @@ export default {
             addInclusionDialog: false,
             editDialog: false,
             inclusion: '',
-            price: 0,
+            // price: 0,
             Inclusion: [],
             filter: '',
             columns: [
                     { name: 'inclusion', required: true, label: 'Inclusion', align: 'left', field: 'inclusion', sortable: true },
-                    { name: 'price', required: true, label: 'Price', align: 'left', field: 'price', sortable: true },
+                    // { name: 'price', required: true, label: 'Price', align: 'left', field: 'price', sortable: true },
                     { name: 'action', label: 'Action' }
             ]
         }
@@ -83,13 +83,13 @@ export default {
     methods: {
         clear(){
             this.inclusion = ''
-            this.price = 0
+            // this.price = 0
 
         },
         setTask(){
                 var inclusionBago = {
-                    inclusion: this.inclusion,
-                    price: this.price
+                    inclusion: this.inclusion
+                    // price: this.price
                 }
                 if(this.inclusion === ''){
                     this.$q.dialog({
@@ -123,7 +123,7 @@ export default {
             console.log(task, 'task')
             this.inclusionID = task['.key']
             this.inclusion = task.inclusion
-            this.price = task.price
+            // this.price = task.price
 			this.addInclusionDialog = true
 			this.isEdit = true
 		    },
@@ -150,7 +150,7 @@ export default {
         addInclusion () {
             var inclusion = {
                 inclusion: this.inclusion,
-                price: this.price
+                // price: this.price
             }   
             let optionss = this.$lodash.filter(this.Inclusion, m => {
                 if(m.inclusion === this.inclusion){
