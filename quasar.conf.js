@@ -94,6 +94,7 @@ module.exports = function (ctx) {
         'QOptionGroup',
         'QTimeline',
         'QTimelineEntry',
+        'QSlideTransition',
         'QSpinnerFacebook'
       ],
       directives: [],
