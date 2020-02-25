@@ -140,14 +140,26 @@
 
           <q-separator inset class="q-my-sm" />
           <q-expansion-item :content-inset-level="0.5" icon="settings" label="File Maintenance"  default-close>
-          <q-item @click="filterDashboardII(link)" class="GNL__drawer-item" v-ripple v-for="link in links2" :key="link.text" clickable>
-            <q-item-section avatar>
-              <q-icon class="text-orange-8" :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
-            </q-item-section>
-          </q-item>
+              <q-expansion-item :content-inset-level="0.5" icon="mdi-package-variant" label="Package Management"  default-close>
+              <q-item @click="filterDashboardII(link)" class="GNL__drawer-item" v-ripple v-for="link in links2" :key="link.text" clickable>
+                <q-item-section avatar>
+                  <q-icon class="text-orange-8" :name="link.icon" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ link.text }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              </q-expansion-item>
+              <q-expansion-item :content-inset-level="0.5" icon="mdi-database-plus" label="Inclusion Management"  default-close>
+                <q-item @click="filterDashboardIII(link)" class="GNL__drawer-item" v-ripple v-for="link in links3" :key="link.text" clickable>
+                  <q-item-section avatar>
+                    <q-icon class="text-orange-8" :name="link.icon" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ link.text }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-expansion-item>
           </q-expansion-item>
           <!-- <q-separator inset class="q-my-sm" />
           <q-expansion-item :content-inset-level="0.5" icon="mail" label="File Maintenance"  default-close>
@@ -199,24 +211,20 @@ export default {
         { icon: 'search', text: 'Saved searches' }
       ],
       links2: [
-        { icon: 'mdi-format-list-bulleted-type', text: 'Food Category' },
-        { icon: 'mdi-city', text: 'City' },
-        { icon: 'mdi-food', text: 'Food' },
-        { icon: 'mdi-room-service', text: 'Services' },
-        { icon: 'mdi-table-chair', text: 'Inclusions' },
-        { icon: 'mdi-database-plus', text: 'Add-Ons' },
-        { icon: 'mdi-palette', text: 'Motif' },
         { icon: 'mdi-briefcase-plus', text: 'Position' },
+        { icon: 'mdi-city', text: 'City' },
+        { icon: 'mdi-palette', text: 'Motif' },
         { icon: 'mdi-calendar', text: 'Event' },
+        { icon: 'mdi-format-list-bulleted-type', text: 'Food Category' },
+        { icon: 'mdi-food', text: 'Food' },
         { icon: 'mdi-package', text: 'Packages' }
       ],
       links3: [
-        { icon: '', text: 'Language & region' },
-        { icon: '', text: 'Settings' },
-        { icon: 'open_in_new', text: 'Get the Android app' },
-        { icon: 'open_in_new', text: 'Get the iOS app' },
-        { icon: '', text: 'Send feedback' },
-        { icon: 'open_in_new', text: 'Help' }
+        { icon: 'mdi-table-chair', text: 'Inclusions' },
+        { icon: 'mdi-alarm-plus', text: 'Extras(Other Inclusion)' },
+        { icon: 'mdi-room-service', text: 'Services' },
+        { icon: 'mdi-database-plus', text: 'Add-Ons' },
+        { icon: 'mdi-candycane', text: 'Freebies' }
       ]
     }
   },
@@ -231,7 +239,7 @@ export default {
             console.log(party, 'party')
             if(party[0].text == 'Walk-In Reservation'){
                 this.$router.push('/walkin')
-            } else if(party[0].text == 'DashBoard') {
+            } else if(party[0].text == 'Dashboard') {
                 this.$router.push('/dashboard')
             } else {
                 this.$router.push('/Error404')
@@ -248,13 +256,7 @@ export default {
                 this.$router.push('/city')
             } else if(party[0].text == 'Food') {
                 this.$router.push('/food')
-            } else if(party[0].text == 'Services') {
-                this.$router.push('/services')
-            } else if(party[0].text == 'Inclusions') {
-                this.$router.push('/inclusion')
-            } else if(party[0].text == 'Add-Ons') {
-                this.$router.push('/addons')
-            } else if(party[0].text == 'Motif') {
+            }else if(party[0].text == 'Motif') {
                 this.$router.push('/motif')
             } else if(party[0].text == 'Event') {
                 this.$router.push('/event')
@@ -262,6 +264,25 @@ export default {
                 this.$router.push('/position')
             } else if(party[0].text == 'Packages') {
                 this.$router.push('/packages')
+            } else {
+                this.$router.push('/Error404')
+            }
+        },
+        filterDashboardIII(link){
+            let party = this.$lodash.filter(this.links3, a=>{
+                    return a.text == link.text
+            })
+            console.log(party, 'party')
+            if(party[0].text == 'Services') {
+                this.$router.push('/services')
+            } else if(party[0].text == 'Inclusions') {
+                this.$router.push('/inclusion')
+            } else if(party[0].text == 'Add-Ons') {
+                this.$router.push('/addons')
+            }else if(party[0].text == 'Freebies') {
+                this.$router.push('/freebies')
+            } else if(party[0].text == 'Extras(Other Inclusion)') {
+                this.$router.push('/extras')
             } else {
                 this.$router.push('/Error404')
             }
