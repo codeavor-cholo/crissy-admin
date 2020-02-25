@@ -1,93 +1,89 @@
 <template>
-    <q-page class="flex flex-center">
-    <div class="q-pa-md row items-start q-gutter-md">
-        <q-card bordered class="my-card">
+    <q-page class="q-pa-xl">
+    <div class="row items-start q-gutter-md">
+        <q-card bordered class="my-card bg-orange-8 text-white col">
             <div class="q-pa-md row items-start q-gutter-md">
-            <q-card-section>
-                <q-icon name="mdi-view-dashboard" style="font-size: 30px;" />
-            </q-card-section>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <q-card-section style="margin-top: 30px">
-                <q-item-label caption>
-                    Capacity
-                </q-item-label>
-                <q-item-label>105GB</q-item-label>
-            </q-card-section>
+                <q-item>
+                    <q-item-section top avatar>
+                        <q-avatar color="white" text-color="orange-8" icon="assignment" />
+                    </q-item-section>
+                    <q-item-section>
+                        <q-item-label>Reservations</q-item-label>
+                        <q-item-label lines="2" class="text-h6">100</q-item-label>
+                    </q-item-section>
+                </q-item>
             </div>
             <q-separator inset />
-            <q-card-section class="text-center"> 
-                <q-icon name="mdi-update" style="font-size: 20px;" />updated now
+            <q-card-section class="text-center q-py-sm"> 
+                <q-btn color="white" label="view reservations" flat @click="onClick" />
             </q-card-section>
         </q-card>
         
-        <q-card bordered class="my-card">
+        <q-card bordered class="my-card bg-orange-8 text-white col">
             <div class="q-pa-md row items-start q-gutter-md">
-            <q-card-section>
-                <q-icon name="mdi-view-dashboard" style="font-size: 30px;" />
-            </q-card-section>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <q-card-section style="margin-top: 30px">
-                <q-item-label caption>
-                    Capacity
-                </q-item-label>
-                <q-item-label>105GB</q-item-label>
-            </q-card-section>
+                <q-item>
+                    <q-item-section top avatar>
+                        <q-avatar color="white" text-color="orange-8" icon="payment" />
+                    </q-item-section>
+                    <q-item-section>
+                        <q-item-label>Payments</q-item-label>
+                        <q-item-label lines="2" class="text-h6">P100,000</q-item-label>
+                    </q-item-section>
+                </q-item>
             </div>
             <q-separator inset />
-            <q-card-section class="text-center"> 
-                <q-icon name="mdi-update" style="font-size: 20px;" />updated now
+            <q-card-section class="text-center q-py-sm"> 
+                <q-btn color="white" label="view payments" flat @click="onClick" />
             </q-card-section>
         </q-card>
 
-        <q-card bordered class="my-card">
+        <q-card bordered class="my-card bg-orange-8 text-white col">
             <div class="q-pa-md row items-start q-gutter-md">
-            <q-card-section>
-                <q-icon name="mdi-view-dashboard" style="font-size: 30px;" />
-            </q-card-section>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <q-card-section style="margin-top: 30px">
-                <q-item-label caption>
-                    Capacity
-                </q-item-label>
-                <q-item-label>105GB</q-item-label>
-            </q-card-section>
+                <q-item>
+                    <q-item-section top avatar>
+                        <q-avatar color="white" text-color="orange-8" icon="assignment" />
+                    </q-item-section>
+                    <q-item-section>
+                        <q-item-label>Ongoing</q-item-label>
+                        <q-item-label lines="2" class="text-h6">4</q-item-label>
+                    </q-item-section>
+                </q-item>
             </div>
             <q-separator inset />
-            <q-card-section class="text-center"> 
-                <q-icon name="mdi-update" style="font-size: 20px;" />updated now
+            <q-card-section class="text-center q-py-sm"> 
+                <q-btn color="white" label="view reservations" flat @click="onClick" />
             </q-card-section>
         </q-card>
 
-        <q-card bordered class="my-card">
+        <q-card bordered class="my-card bg-orange-8 text-white col">
             <div class="q-pa-md row items-start q-gutter-md">
-            <q-card-section>
-                <q-icon name="mdi-view-dashboard" style="font-size: 30px;" />
-            </q-card-section>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <q-card-section style="margin-top: 30px">
-                <q-item-label caption>
-                    Capacity
-                </q-item-label>
-                <q-item-label>105GB</q-item-label>
-            </q-card-section>
+                <q-item>
+                    <q-item-section top avatar>
+                        <q-avatar color="white" text-color="orange-8" icon="assignment" />
+                    </q-item-section>
+                    <q-item-section>
+                        <q-item-label>Cancelled</q-item-label>
+                        <q-item-label lines="2" class="text-h6">100</q-item-label>
+                    </q-item-section>
+                </q-item>
             </div>
             <q-separator inset />
-            <q-card-section class="text-center"> 
-                <q-icon name="mdi-update" style="font-size: 20px;" />updated now
+            <q-card-section class="text-center q-py-sm"> 
+                <q-btn color="white" label="view reservations" flat @click="onClick" />
             </q-card-section>
         </q-card>
     </div>
     <div class="q-pa-md row items-start q-gutter-md">
-        <q-card bordered class="my-card">
+        <!-- <q-card bordered class="my-card">
             <q-card-section>
-                <apexcharts width="450" type="bar" :options="options" :series="series"></apexcharts>
+                <apexcharts width="450" type="line" :options="options" :series="series"></apexcharts>
             </q-card-section>
         </q-card>
         <q-card bordered class="my-card">
             <q-card-section class="center" style="height: 327px; width: 420px">
                 <apexcharts width="400" type="donut" :options="doptions" :series="dseries"></apexcharts>
             </q-card-section>
-        </q-card>
+        </q-card> -->
     </div>
     </q-page>
 

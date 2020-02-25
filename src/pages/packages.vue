@@ -1,126 +1,135 @@
 <template>
-    <q-page class="flex flex-center">
+    <q-page padding>
         <template>  
                 <q-page-sticky position="bottom-right" :offset="[80, 50]">
-                    <q-btn label="Add New Package" icon="add" class="q-my-md q-ml-md" color="accent" @click="addPackageDialog = true" />
+                    <q-btn label="Add New Package" icon="add" class="q-my-md q-ml-md" color="orange-8" @click="addPackageDialog = true" />
                         <q-tooltip>
                             Add Package
                         </q-tooltip>
                 </q-page-sticky>
                     <div class="q-mx-lg" >
-                        <q-table grid :data="Packages" :columns="columns" :filter="filter">
+                        <q-table grid :data="Packages" :columns="columns" :filter="filter" class="q-px-sm full-width align-center ">
                             <template v-slot:item="props">
-                                <!-- <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition " :style="props.selected ? 'transform: scale(0.95);' : ''"> -->
-                                    <q-card class="my-card" style="border: 2px solid;border-color: purple;" >
-                                        <q-card-section side>
+                                <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-4 grid-style-transition " :style="props.selected ? 'transform: scale(0.95);' : ''">
+                                    <q-card class="my-card"  style="border-radius:20px" >
+                                        <q-card-section class="text-grey-8">
                                             <q-list dense>
                                             <q-item class="q-mt-sm">
-                                            <span class="full-width text-center text-teal text-h6 text-weight-bold">{{props.row.name}}
-                                                <br>
-                                                <q-chip class="text-center">{{props.row.price}} per pax</q-chip>
-                                            </span>
+                                                <q-item-section>
+                                                    <span class="full-width text-h6  text-weight-bold">{{props.row.name}}</span>
+                                                </q-item-section>
+                                                 <q-item-section side>
+                                                    <span class="text-h6 text-weight-bold text-orange-8">P {{props.row.price}}.00</span>
+                                                    <span class=" text-orange-8">per pax</span> 
+                                                 </q-item-section>
+                                            
                                             </q-item>     
-                                            <q-separator class="q-mt-sm"/>
-                                            <q-item class="q-mt-sm text-grey-8" v-show="props.row.category">
-                                            <span class="full-width text-center text-weight-bold">FOOD CATEGORIES</span>
+                                            <q-separator  inset class="q-mt-sm" />           
+                                            <q-item class="q-mt-sm " v-show="props.row.category">
+                                            <span class="full-width text-weight-bold">FOOD CATEGORIES</span>
                                             </q-item>
-                                            <q-item v-for="(price, index) in props.row.category" :key="index" class="text-grey-8">
+                                            <q-item v-for="(price, index) in props.row.category" :key="index" class="">
                                                 <q-item-section>
                                                 <q-item-label> {{ price.viandsQty }}<span v-show="price.viandsQty != '1'">&nbsp;</span>{{ price.category }}</q-item-label>
                                                 </q-item-section>
                                             </q-item>
-                                            <q-separator class="q-mt-sm"/>
+            
                                             <q-item class="q-mt-sm" v-show="props.row.inclusions">
-                                            <span class="full-width text-center text-weight-bold text-grey-8" >INCLUSIONS</span>
+                                            <span class="full-width text-weight-bold " >INCLUSIONS</span>
                                             </q-item>
-                                            <q-item v-for="(price, index) in props.row.inclusions" :key="index" class="text-grey-8">
+                                            <q-item v-for="(price, index) in props.row.inclusions" :key="index" class="">
                                                 <q-item-section>
                                                 <q-item-label> {{ price.inclusion }}</q-item-label>
                                                 </q-item-section>
                                             </q-item>
                                         </q-list>
+            
+                                        <q-card-actions align="center">
+                                            <q-btn flat label="Edit" icon="edit" color="green"/>
+                                            <q-btn flat label="Delete" icon="delete" color="grey-8" />
+                                        </q-card-actions>
                                         </q-card-section>
                                     </q-card>
-                                <!-- </div> -->
+                                </div>
                             </template>
                         </q-table>
                     </div>
         </template>
         <q-dialog v-model="addPackageDialog" full-width full-height persistent>
             <q-card>
-                <q-banner inline-actions class="text-white bg-warning" v-show="showCompleteBanner">
+                <!-- <q-banner inline-actions class="text-white bg-warning" v-show="showCompleteBanner">
                     <q-icon name="warning"/>&nbsp;Complete the <b>Category Qty Input</b> to show <b>Price per Pax</b>
-                </q-banner>
+                </q-banner> -->
                 <div class="container row" >
                 <q-card-section class="q-pa-md col-7">
                     <div class="text-h6 q-pb-none q-ml-md">New Package</div>
                     <div class="container row q-ml-sm q-pa-sm q-py-md">
-                    <q-input color="purple" outlined class="col-7" v-model="packageName" label="Package Name"/>
-                    <q-select color="purple" class="col-5 q-pa-sm" outlined v-model="selectEvent" :options="eventOpt" emit-value map-options label="Select Event" />
+                    <q-input color="orange-8" outlined class="col-7" v-model="packageName" label="Package Name"/>
+                    <q-select color="orange-8" class="col-5 q-pa-sm" outlined v-model="selectEvent" :options="eventOpt" emit-value map-options label="Select Event" />
                     </div>
                     
-                    <div class="my-card q-ml-md q-mr-md q-mb-md q-pa-sm q-py-md" style="border: 1.5px solid;border-color: purple;">
-                        <div class="q-mx-md text-weight-bold text-grey-8">
-                            <span>
+                    <div class="my-card q-ml-md q-mr-md q-mb-md q-pa-sm q-py-md" >
+                        <div class="text-grey-8">
+                            <span class="text-h6 text-weight-light">
                             Select Category
                             </span>
                         </div>
                         <div class="q-gutter-xs">
-                            <q-checkbox v-model="selection" :val="i" :label="i.category+' ('+ i.min +' php)'" color="purple" v-for="(i, index) in this.mergeData" :key="index" @input="checkIfRemoved(i.category)"/>
+                            <q-checkbox v-model="selection" :val="i" :label="i.category+' ('+ i.min +' php)'" color="orange-8" v-for="(i, index) in this.mergeData" :key="index" @input="checkIfRemoved(i.category)"/>
                         </div>
                     </div>
                     <div v-show="this.selection.length != 0">
-                        <div class="my-card q-ma-md q-pa-md" style="border: 1.5px solid;border-color: purple;">
+                        <div class="my-card q-ma-md q-pa-md bg-grey-2" flat>
                             <div>
-                                <div class="q-ml-md text-weight-bold text-grey-8">
+                                <div class="text-h6 text-weight-light">
                                 Please Enter Quantity
                                 </div>
-                                <q-list dense class="text-left text-grey-8 bg-white" >
+                                <q-list dense class="text-left text-grey-8 bg-grey-2" >
                                     <q-item dense v-for="(i, index) in this.selection" :key="index">
                                         <q-item-section>
                                             <!-- <q-item-label dense class="q-pl-md" lines="1" v-if="i.min == undefined">{{i.category}}</q-item-label> -->
                                             <q-item-label dense class="q-pl-md" lines="1">{{i.category+' ('+ i.min +' Pesos)'}}</q-item-label>
                                         </q-item-section>
                                         <q-item-section side>
-                                            <q-input color="purple" outlined="" class="q-ma-sm" type="number" dense min="0" v-model="viandsQty[i.category]" label="Qty"/>
+                                            <q-input color="orange-8" outlined="" class="q-ma-sm" type="number" dense min="0" v-model="viandsQty[i.category]" label="Qty"/>
                                         </q-item-section>
                                     </q-item>
                                 </q-list>
                             </div>
                         </div>
                     </div>
-                    <div class="my-card q-ma-md q-pa-sm q-py-md" style="border: 1.5px solid;border-color: purple;">
-                        <div class="q-mx-md text-weight-bold text-grey-8">
+                    <div class="my-card q-ma-md q-pa-sm q-py-md">
+                        <div class="text-h6 text-weight-light">
                             <span>
                             Select Inclusions
                             </span>
                         </div>
                         <div class="q-gutter-xs">
-                            <q-checkbox v-model="selectedInclusions" :val="i" :label="i.inclusion" color="purple" v-for="(i, index) in this.Inclusion" :key="index"/>
+                            <q-checkbox v-model="selectedInclusions" :val="i" :label="i.inclusion" color="orange-8" v-for="(i, index) in this.Inclusion" :key="index"/>
                         </div>
                     </div>
-                    <div class="my-card q-ma-md q-pa-sm q-py-md" style="border: 1.5px solid;border-color: purple;">
+                    <div class="my-card q-ma-md q-pa-sm q-py-md">
                         <div class="q-ml-sm q-mr-sm text-weight-bold text-grey-8">
-                            <span>
+                            <span class="text-h6 text-weight-light">
                             Package Pricing
                             </span>
                         </div>
-                    <q-input color="purple" outlined class="q-mt-sm" type="number" v-model="packagePrice" label="Package Price"/>
+                    <q-input color="orange-8" outlined class="q-mt-sm" type="number" v-model="packagePrice" label="Package Price"/>
                     <!-- <q-input color="pink-3" outlined class="q-mt-md" type="number" dense v-model="packagePrice" label="Inclusion Price"/> -->
                     </div>
                 </q-card-section>
                 <q-card-section class="q-pa-md container row col-5">
                     <q-page-sticky position="top-right" :offset="[60, 0]"> 
-                    <div class="my-card q-mt-md q-pa-sm" style="width: 530px; border: 1.5px solid;border-color: purple;">
-                        <div class="q-ml-sm q-mr-sm text-weight-bold text-purple">
-                            <span>
+                    <div class="my-card q-mt-md q-pa-sm" style="width: 530px;">
+                        <div class="q-ml-sm q-mr-sm text-weight-bold text-orange-8">
+                            <span class="text-h6 text-weight-light">
                             Package Pricing Guide
                             </span>
                         </div>
                         <div class="container row">
                             <q-list dense class="q-pa-sm col-6 text-grey-8 bg-white">
                             <div>
-                                <q-item dense class="text-caption text-weight-bold">
+                                <q-item dense class=" text-weight-bold">
                                     <q-item-section>
                                         <q-item-label dense lines="1">Selected Food</q-item-label>
                                     </q-item-section>
@@ -131,11 +140,11 @@
                                 <q-separator/>
                                 <q-scroll-area style="height:60vh" :visible="true">
                                 <q-item dense v-for="(i, index) in this.selection" :key="index">
-                                    <q-item-section class="text-caption">
+                                    <q-item-section class="">
                                         <q-item-label dense lines="1" v-if="i.min == undefined">{{i.category}}</q-item-label>
                                         <q-item-label dense lines="1" v-else>{{i.category+' ('+ i.min +' php)'}}</q-item-label>
                                     </q-item-section>
-                                    <q-item-section side class="text-purple">
+                                    <q-item-section side class="text-orange-8">
                                         {{viandsQty[i.category]}}
                                     </q-item-section>
                                 </q-item>
@@ -145,7 +154,7 @@
                             <!-- <q-separator vertical position="top-right" :offset="[60, 0]/> -->
                             <q-list dense class="q-pa-sm col-6 text-grey-8 bg-white">
                                 <div>
-                                    <q-item dense class="text-caption text-weight-bold">
+                                    <q-item dense class=" text-weight-bold">
                                     <q-item-section>
                                         <q-item-label dense lines="1">Selected Inclusion</q-item-label>
                                     </q-item-section>
@@ -156,21 +165,18 @@
                                     <q-separator/>
                                     <q-scroll-area style="height:60vh" :visible="true">
                                     <q-item dense v-for="(i, index) in this.selectedInclusions" :key="index">
-                                        <q-item-section class="text-caption">
+                                        <q-item-section class="">
                                             <q-item-label dense lines="1">{{i.inclusion}}</q-item-label>
-                                        </q-item-section>
-                                        <q-item-section side class="text-pink text-overline">
-                                            FREE
                                         </q-item-section>
                                     </q-item>
                                     </q-scroll-area>
                                     </div>
                             </q-list>
-                                    <q-item class="text-caption text-weight-bold">
+                                    <q-item class="text-h6 text-weight-bold">
                                         <q-item-section>
                                             <q-item-label dense lines="1">Price per Pax</q-item-label>
                                         </q-item-section>
-                                        <q-item-section side>
+                                        <q-item-section side class="text-orange-8">
                                             {{returnSelectedMinMax}}
                                         </q-item-section>
                                     </q-item>
@@ -181,8 +187,8 @@
                 </q-card-section>
                 </div>
 
-                <q-card-actions align="left" class="text-primary col-12 q-mr-md">
-                <q-btn flat label="Add Package" color="pink-3" v-close-popup @click="addPackage"/>
+                <q-card-actions align="left" class="col-12 q-pl-xl">
+                <q-btn flat label="Add Package" color="orange-8" v-close-popup @click="addPackage"/>
                 <q-btn flat label="Cancel" v-close-popup color="grey-8" @click="resetValues"/>
                 <!-- <q-btn flat label="merge Food" @click="mergePricing" color="pink-3" /> -->
                 </q-card-actions>
@@ -269,7 +275,7 @@ export default {
 
                 return '(P '+sumMin+')'
             } catch(err){
-                return ''
+                return 0
             }
         },
         mergeData(){
@@ -364,7 +370,7 @@ export default {
                 this.$q.dialog({
                   title: 'Required Fields is Empty.',
                   message: 'Fill up all Requirements',
-                  color:'pink-6',
+                  color:'orange-8',
                   ok: 'Ok',
                   persistent: true
                 }).onOk(()=>{
@@ -375,6 +381,7 @@ export default {
                     title: 'Add Package',
                     message: 'Add This New Package?',
                     ok: 'Yes',
+                    color:'orange-8',
                     cancel: 'Cancel',
                     persistent: true
                   }).onOk(() => {
@@ -402,7 +409,7 @@ export default {
                         this.$q.notify({
                                 message: 'Package Added!',
                                 icon: 'mdi-folder-plus-outline',
-                                color: 'pink-3',
+                                color: 'orange-8',
                                 textColor: 'white',
                                 position: 'center'
                             })
