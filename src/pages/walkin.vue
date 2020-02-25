@@ -1,140 +1,213 @@
 <template>
-    <q-page>
-            <div class="q-pa-md">
-                <q-table
-                title="Treats"
-                :data="data"
-                :columns="columns"
-                row-key="name"
-                />
+    <q-page class="row">
+          <div class="q-pa-sm col-8">
+              <q-stepper header-nav v-model="step" ref="stepper" color="deep-orange-4" vertical falt active-color="orange-8" inactive-color="blue-10" animated>
+                <q-step :name="1" title="Select Available Date" icon="settings" :done="step > 1">
+                  <div class="column items-center">
+                     <q-date v-model="date" minimal class="shadow-0" mask="YYYY-MM-DD" color="orange-8" ></q-date> 
+                  </div>
+                </q-step>
+
+                <q-step :name="2" title="Fill up Information" icon="create_new_folder" :done="step > 2">
+                  <div class="row col-12">
+                    <q-input filled color="orange-8" outlined class="col-4 q-pa-sm" v-model="fname" label="Enter First Name" />
+                    <q-input filled color="orange-8" outlined class="col-4 q-pa-sm" v-model="lname" label="Enter Last Name" />
+                    <div class="q-pa-sm col-4">
+                      <q-input filled color="orange-8" outlined v-model="date" mask="date">
+                        <template v-slot:append>
+                          <q-icon name="event" color="orange-8" class="cursor-pointer">
+                            <q-tooltip>
+                              Select New Date
+                            </q-tooltip>
+                            <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                              <q-date v-model="date" mask="YYYY-MM-DD" @input="() => $refs.qDateProxy.hide()" />
+                            </q-popup-proxy>
+                          </q-icon>
+                        </template>
+                      </q-input>
+                    </div>
+                  </div>
+                  <div class="row col-12">
+                      <q-input type="number" filled color="orange-8" outlined class="col-4 q-pa-sm" v-model="pax" label="Enter Guest" />
+                    <div class="q-pa-sm col-4">
+                      <q-input label="Start Time" filled v-model="starttime" mask="time">
+                        <template v-slot:append>
+                          <q-icon color="orange-8" name="access_time" class="cursor-pointer">
+                            <q-popup-proxy transition-show="scale" transition-hide="scale">
+                              <q-time v-model="starttime" />
+                            </q-popup-proxy>
+                          </q-icon>
+                        </template>
+                      </q-input>
+                    </div>
+                    <div class="q-pa-sm col-4">
+                      <q-input label="End Time" filled v-model="endtime" mask="time">
+                        <template v-slot:append>
+                          <q-icon color="orange-8" name="access_time" class="cursor-pointer">
+                            <q-popup-proxy transition-show="scale" transition-hide="scale">
+                              <q-time v-model="endtime" />
+                            </q-popup-proxy>
+                          </q-icon>
+                        </template>
+                      </q-input>
+                    </div>
+                  </div>
+                  <div>
+                    <q-input filled color="orange-8" outlined class="col-12 q-pa-sm" v-model="place" label="Enter Event Place" />
+                  </div>
+                  <div class="row">
+                    <q-select filled class="q-pa-sm col-4" color="orange-8" outlined v-model="selectMotif" :options="motifOpt" emit-value map-options label="Select Motif" />
+                    <q-select filled class="q-pa-sm col-4" color="orange-8" outlined v-model="selectEvent" :options="eventOpt" emit-value map-options label="Select Event" />
+                    <q-input filled color="orange-8" outlined class="col-4 q-pa-sm" v-model="email" label="Enter Email Address" />
+                  </div>  
+                </q-step>
+
+                <q-step :name="3" title="Select Package" icon="assignment" :done="step > 3">
+                  <q-table grid :data="eventpackages" :columns="columns" :filter="filter" row-key=".key" selection="single" :selected.sync="selected">
+                      <template v-slot:item="props">
+                          <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-4 grid-style-transition" color="deep-orange-4" :style="props.selected ? 'transform: scale(0.95);' : ''">
+                              <q-card class="my-card" style="border: 2px solid;border-color: grey;" :class="props.selected ? 'bg-grey-2' : ''">
+                                  <q-card-section side>
+                                      <q-list dense>
+                                      <q-item class="q-mt-sm">
+                                      <span class="full-width text-center text-teal text-h6 text-weight-bold">
+                                          <q-checkbox color="deep-orange-4" dense v-model="props.selected" :label="props.row.name" />
+                                          <br>
+                                          <q-chip class="text-center">{{props.row.price}}php per pax</q-chip>
+                                      </span>
+                                      </q-item>     
+                                      <q-separator class="q-mt-sm"/>
+                                      <q-item class="q-mt-sm text-grey-8" v-show="props.row.category">
+                                      <span class="full-width text-center text-weight-bold">FOOD CATEGORIES</span>
+                                      </q-item>
+                                      <q-item v-for="(price, index) in props.row.category" :key="index" class="text-grey-8">
+                                          <q-item-section>
+                                          <q-item-label> {{ price.viandsQty }} <span v-show="price.viandsQty != '1'"></span> {{ price.category }}</q-item-label>
+                                          </q-item-section>
+                                      </q-item>
+                                      <q-separator class="q-mt-sm"/>
+                                      <q-item class="q-mt-sm" v-show="props.row.inclusions">
+                                      <span class="full-width text-center text-weight-bold text-grey-8" >INCLUSIONS</span>
+                                      </q-item>
+                                      <q-item v-for="(price, index) in props.row.inclusions" :key="index" class="text-grey-8">
+                                          <q-item-section>
+                                          <q-item-label> {{ price.inclusion }}</q-item-label>
+                                          </q-item-section>
+                                      </q-item>
+                                  </q-list>
+                                  </q-card-section>
+                              </q-card>
+                          </div>
+                      </template>
+                  </q-table>
+                </q-step>
+
+                <q-step :name="4" title="Create an ad" icon="add_comment">
+                  Try out different ad text to see what brings in the most customers, and learn how to
+                  enhance your ads using features like ad extensions. If you run into any problems with
+                  your ads, find out how to tell if they're running and how to resolve approval issues.
+                </q-step>
+
+                <template v-slot:navigation>
+                  <q-stepper-navigation>
+                    <q-btn @click="$refs.stepper.next()" color="orange-8" :label="step === 4 ? 'Finish' : 'Continue'" />
+                    <q-btn v-if="step > 1" flat style="color: #010A43" @click="$refs.stepper.previous()" label="Back" class="q-ml-sm" />
+                  </q-stepper-navigation>
+                </template>
+              </q-stepper>
+            </div>
+            <div class="q-pa-sm col-4">
+              <q-page-sticky position="top-right" :offset="[10, 8]">
+                <q-card class="my-card" style="height: 540px; width: 440px">
+                    <q-card-section>
+                      <div class="column items-center q-pb-sm q-pt-none q-mt-none">
+                          <div class="column items-center text-h6">Order Details</div>
+                      </div>
+                      <div class="row">
+                      </div>
+                    </q-card-section>
+                </q-card>
+              </q-page-sticky>
             </div>
     </q-page>
 </template>
 <script>
+import { date } from 'quasar'
 export default {
   data () {
     return {
-      columns: [
-        {
-          name: 'name',
-          required: true,
-          label: 'Dessert (100g serving)',
-          align: 'left',
-          field: row => row.name,
-          format: val => `${val}`,
-          sortable: true
-        },
-        { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-        { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-        { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-        { name: 'protein', label: 'Protein (g)', field: 'protein' },
-        { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-        { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-        { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
-      ],
-      data: [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          sodium: 87,
-          calcium: '14%',
-          iron: '1%'
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          sodium: 129,
-          calcium: '8%',
-          iron: '1%'
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          sodium: 337,
-          calcium: '6%',
-          iron: '7%'
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          sodium: 413,
-          calcium: '3%',
-          iron: '8%'
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          sodium: 327,
-          calcium: '7%',
-          iron: '16%'
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          sodium: 50,
-          calcium: '0%',
-          iron: '0%'
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          sodium: 38,
-          calcium: '0%',
-          iron: '2%'
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          sodium: 562,
-          calcium: '0%',
-          iron: '45%'
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          sodium: 326,
-          calcium: '2%',
-          iron: '22%'
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          sodium: 54,
-          calcium: '12%',
-          iron: '6%'
-        }
-      ]
+        endtime: date.formatDate(new Date(), '10:50'),
+        starttime: date.formatDate(new Date(), '12:50'),
+        Motif: [],
+        selected: [],
+        Packages: [],
+        Event: [],
+        selectEvent: '',
+        selectMotif: '',
+        place: '',
+        email: '',
+        lname: '',
+        fname: '',
+        step: 1,
+        splitterModel: 50,
+        date: date.formatDate(new Date(),'YYYY-MM-DD'),
+        columns: [
+          { name: 'name', required: true, label: 'Package name', align: 'center', field: 'name', sortable: true },
+          { name: 'price', align: 'center', label: 'Package Per Head Price', field: 'price', sortable: true },
+        ]
     }
+  },
+  mounted(){
+        this.$binding('Motif', this.$firestoreApp.collection('Motif'))
+            .then(Motif => {
+            console.log(Motif, 'Motif')
+            }),
+        this.$binding('Event', this.$firestoreApp.collection('Event'))
+            .then(Event => {
+            console.log(Event, 'Event')
+            }),
+        this.$binding('Packages', this.$firestoreApp.collection('Packages'))
+            .then(Packages => {
+            console.log(Packages, 'Packages')
+            })
+  },
+  computed: {
+      eventpackages(){ 
+            let optionss = this.$lodash.filter(this.Packages, m => {
+						return m.event == this.selectEvent
+                    })    
+                return optionss
+      },
+      returnDate(){
+        let now = date.formatDate(new Date(),'YYYY-MM-DD')
+        if(this.date == now){
+          return 'Select Date'
+        } else {
+          return ''
+        }
+      },
+      motifOpt(){
+                let optionss = this.Motif.map(m => {
+                    return {
+                        label: m.motif,
+                        value: m.motif
+                    }
+                })
+                return optionss
+        },
+      eventOpt(){
+                let optionss = this.Event.map(m => {
+                    return {
+                        label: m.event,
+                        value: m.event
+                    }
+                })
+
+                return optionss
+        },
+  },
+  methods: {
+
   }
 }
 </script>

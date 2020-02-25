@@ -93,7 +93,8 @@ module.exports = function (ctx) {
         'QSpace',
         'QOptionGroup',
         'QTimeline',
-        'QTimelineEntry'
+        'QTimelineEntry',
+        'QSlideTransition'
       ],
       directives: [],
 

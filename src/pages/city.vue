@@ -22,7 +22,7 @@
                                                     </q-tooltip>
                                                 </q-btn>
                                                 <q-btn flat icon="delete" label="delete" dense style="color: #010A43" @click="deletedialog(props.row)">
-                                                    <q-tooltip>
+                                                    <q-tooltip> 
                                                         Delete
                                                     </q-tooltip>
                                                 </q-btn>
