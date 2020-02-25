@@ -1,22 +1,21 @@
 <template>
 <q-layout View: lHh Lpr fFf>
 <q-page-container>
-    <q-page style="background-image: url('statics/bg/2.jpg'); background-color: #cccccc; height: 400px; background-position: center; background-repeat: no-repeat; background-size: cover; position: relative;">
+    <q-page style="background-image: url('statics/bg/wallpaper.jpg'); background-color: #cccccc; height: 400px; background-position: center; background-repeat: no-repeat; background-size: cover; position: relative;">
     <div>
-    <q-card class="my-card fixed-center" style="position:absolute; top:50%; left:50%; transform: translate(-50%, -50%); width:400px; height:440px; padding:80px 40px; box-sizing: border-box; background:rgba(0,0,0,0.5) ;">
+    <q-card class="my-card fixed-center q-pa-lg" style="position:absolute; top:50%; left:50%; transform: translate(-50%, -50%); width:400px; height:auto; box-sizing: border-box; background:rgba(255,255,255,.8) ; border-radius:20px;">
         <div>
-          <q-img src="statics/bg/3.png" style="width:100px; height:100px;  overflow:hidden; position:absolute; top:calc(-100px/2); left:calc(50% - 50px); border-radius:50%;" :ratio="1" basic spinner-color="white"></q-img>
+          <q-img src="statics/logo.png" style="width:100px; height:100px;  overflow:hidden; position:absolute; top:calc(-100px/2); left:calc(50% - 50px); border-radius:50%;" :ratio="1" basic spinner-color="white"></q-img>
         </div>
-        <div style="margin:0; padding:0 0 20px; color:#1E90FF; text-align:center;" class="text-h6">LOGIN HERE</div>
-      <q-card-section>
-        <q-input outlined style="width:100%; margin-bottom: 20px; border: none; border-bottom: 1px solid #fff; background: white; outline:none; height:50px; color:#fff; font-size: 16px;" v-model="email" type="email" prefix="Email:">
-        <template v-slot:append>
+      <q-card-section class="q-mt-lg">
+        <q-input outlined rounded color="orange-8" style="width:100%; margin-bottom: 20px; border: none; border-bottom: 1px solid #fff; background: white; outline:none; height:50px; color:#fff; font-size: 16px; border-radius: 100px;" v-model="email" type="email" prefix="Email:">
+        <template v-slot:prepend>
           <q-avatar>
             <q-icon name="mail" />
           </q-avatar>
         </template>
       </q-input>
-      <q-input outlined style="width:100%; margin-bottom: 20px; border: none; border-bottom: 1px solid #fff; background: white; outline:none; height:50px; color:#fff; font-size: 16px;" class="q-mt-md" prefix="Password:" v-model="password" :type="isPwd ? 'password' : 'text'">
+      <q-input outlined rounded color="orange-8" style="width:100%; margin-bottom: 20px; border: none; border-bottom: 1px solid #fff; background: white; outline:none; height:50px; color:#fff; font-size: 16px; border-radius: 100px;" class="q-mt-md" prefix="Password:" v-model="password" :type="isPwd ? 'password' : 'text'">
         <template v-slot:append>
           <q-avatar>
             <q-icon
@@ -25,11 +24,17 @@
             @click="isPwd = !isPwd"
           />
           </q-avatar>
+
+        </template>
+        <template v-slot:prepend>
+          <q-avatar>
+            <q-icon name="lock" />
+          </q-avatar>
         </template>
       </q-input>
       </q-card-section>
-      <q-card-actions>
-        <q-btn style="border:none; outline:none; height: 40px; color:#fff; font-size:16px; background: rgb(255,38,126); cursor:pointer; border-radius:20px;" color="primary" label="Login"  class="full-width" @click="login2" />
+      <q-card-actions class="q-py-none">
+        <q-btn style="border:none; outline:none; color:#fff; font-size:16px; background: rgb(255,38,126); cursor:pointer; border-radius:20px;" color="orange-8" label="Login" @click="login2" class="full-width" />
         <!-- <q-btn style="border:none; outline:none; height: 40px; color:#fff; font-size:16px; background: rgb(255,38,126); cursor:pointer; border-radius:20px;" rounded color="primary" class="full-width q-mt-md" label="Register" @click="showRegisterDialog" /> -->
       </q-card-actions>
     </q-card>
@@ -54,7 +59,7 @@ export default {
         return {
          email: '',
          password: '',   
-         isPwd: '',
+         isPwd: true,
          registerDialog: true,
         }
     },
