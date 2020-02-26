@@ -679,7 +679,15 @@ export default {
         },
   },
   methods: {
-    reservenowCash(){
+    formatTimeInput(time){
+      //get time to format for display
+      let baseDate = new Date(2020,1,1)
+      let arr = time.split(':')
+      let formatTime = date.addToDate(baseDate, {hours:arr[0],minutes:arr[1]})
+
+      return this.$moment(formatTime).format('LT')
+    },
+    reservenowCard(){
         let reserveDetails = {
             clientReserveDate: this.date,
             clientFName: this.fname,
@@ -700,6 +708,68 @@ export default {
             clientPaidAmount: this.enterAmount,
             clientPayDetails: this.paydetails,
             clientTokenID: this.token.id,
+            clientPaymentType: 'CARD',
+            clientReserveType: 'WALK-IN',
+            clientDateofReserve: date.formatDate(new Date(), 'YYYY-MM-DD'),
+            }
+            this.$firestoreApp.collection('Reservation').add(reserveDetails)
+            .then((ref) =>{
+              let key = ref.id
+              let paymentDetails = {
+                  clientReservationKey: ref.id,
+                  clientPayDetails: this.paydetails,
+                  clientTokenID: this.token.id,
+                  clientPaymentType: 'CARD',
+              }
+                  this.$firestoreApp.collection('Payments').add(paymentDetails)
+                  .then(()=>{
+                      this.$q.notify({
+                        message: 'RESERVED!',
+                        icon: 'mdi-folder-plus-outline',
+                        color: 'orange-8',
+                        textColor: 'white',
+                        position: 'center'
+                      })
+                  })
+              })
+                  this.date = date.formatDate(new Date(),'YYYY-MM-DD'),
+                  this.fname = ''
+                  this.lname = ''
+                  this.place = ''
+                  this.selectCity = ''
+                  this.selectEvent = ''
+                  this.selectMotif = ''
+                  this.pax = 0 
+                  this.email = ''
+                  this.starttime = date.formatDate(new Date(), '10:50'),
+                  this.endtime = date.formatDate(new Date(), '10:50'),
+                  this.selected = []
+                  this.choiceOfFood = []
+                  this.servicesSelected = []
+                  this.addonsSelected = []
+                  this.step = 1
+    },
+    reservenowCash(){
+        let reserveDetails = {
+            clientReserveDate: this.date,
+            clientFName: this.fname,
+            clientLName: this.lname,
+            clientPlace: this.place,
+            clientCity: this.selectCity,
+            clientEvent: this.selectEvent,
+            clientMotif: this.selectMotif,
+            clientPax: this.pax,
+            clientEmail: this.email,
+            clientStartTime: this.formatTimeInput(this.starttime),
+            clientEndTime: this.formatTimeInput(this.endtime),
+            clientSelectPackage: this.selected[0],
+            clientFoodChoice: this.choiceOfFood,
+            clientServices: this.servicesSelected,
+            clientAddons: this.addonsSelected,
+            clientTotalPayment: this.totalpayment,
+            clientPaidAmount: this.enterAmount,
+            clientPayDetails: 'CASH',
+            clientTokenID: 'CASH',
             clientPaymentType: 'CASH',
             clientReserveType: 'WALK-IN',
             clientDateofReserve: date.formatDate(new Date(), 'YYYY-MM-DD'),
@@ -718,7 +788,7 @@ export default {
                       this.$q.notify({
                         message: 'RESERVED!',
                         icon: 'mdi-folder-plus-outline',
-                        color: 'pink-3',
+                        color: 'orange-8',
                         textColor: 'white',
                         position: 'center'
                       })
@@ -826,13 +896,14 @@ export default {
         this.$q.dialog({
             title: `Unable to Continue??`,
             message: 'Please Select Payment Type??',
-            color: 'pink-6',
+            color: 'orange-8',
             textColor: 'grey',
             icon: 'negative',
             ok: 'Ok'
         })
       }else{
           this.paydetails = charge
+          this.reservenowCard()
       }
     },
   }

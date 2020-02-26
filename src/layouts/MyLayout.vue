@@ -241,6 +241,8 @@ export default {
                 this.$router.push('/walkin')
             } else if(party[0].text == 'Dashboard') {
                 this.$router.push('/dashboard')
+            } else if(party[0].text == 'Reservation') {
+                this.$router.push('/reservation')
             } else {
                 this.$router.push('/Error404')
             }
