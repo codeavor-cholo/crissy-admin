@@ -103,7 +103,7 @@
                 <span class="q-ml-md">Admin</span>
               </template>
                   <q-list>
-              <q-item clickable v-close-popup @click="onItemClick">
+              <q-item clickable v-close-popup>
                 <q-item-section>
                   <q-item-label>Account Settings</q-item-label>
                 </q-item-section>
@@ -221,10 +221,10 @@ export default {
       ],
       links3: [
         { icon: 'mdi-table-chair', text: 'Inclusions' },
-        { icon: 'mdi-alarm-plus', text: 'Extras(Other Inclusion)' },
+        // { icon: 'mdi-alarm-plus', text: 'Extras(Other Inclusion)' },
         { icon: 'mdi-room-service', text: 'Services' },
         { icon: 'mdi-database-plus', text: 'Add-Ons' },
-        { icon: 'mdi-candycane', text: 'Freebies' }
+        // { icon: 'mdi-candycane', text: 'Freebies' }
       ]
     }
   },
@@ -241,6 +241,8 @@ export default {
                 this.$router.push('/walkin')
             } else if(party[0].text == 'Dashboard') {
                 this.$router.push('/dashboard')
+            } else if(party[0].text == 'Reservation') {
+                this.$router.push('/reservation')
             } else {
                 this.$router.push('/Error404')
             }
