@@ -1,13 +1,14 @@
 <template>
     <q-page padding>
         <template>  
-                <q-page-sticky position="bottom-right" :offset="[80, 50]">
-                    <q-btn label="Add New Package" icon="add" class="q-my-md q-ml-md" color="orange-8" @click="addPackageDialog = true" />
+                <!-- <q-page-sticky position="top-right" :offset="[80, 50]">
+                    <q-btn label="Add New Package" icon="add" class="q-my-md q-ml-md" color="orange-8" @click="$router.push('/createpackage')" />
                         <q-tooltip>
                             Add Package
                         </q-tooltip>
-                </q-page-sticky>
+                </q-page-sticky> -->
                     <div class="q-mx-lg" >
+                        <q-btn label="Add New Package" icon="add" class="q-my-md q-ml-md align-right" color="orange-8" @click="$router.push('/createpackage')" />
                         <q-table grid :data="Packages" :columns="columns" :filter="filter" class="q-px-sm full-width align-center ">
                             <template v-slot:item="props">
                                 <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-4 grid-style-transition " :style="props.selected ? 'transform: scale(0.95);' : ''">
@@ -30,7 +31,7 @@
                                             </q-item>
                                             <q-item v-for="(price, index) in props.row.category" :key="index" class="">
                                                 <q-item-section>
-                                                <q-item-label> {{ price.viandsQty }}<span v-show="price.viandsQty != '1'">&nbsp;</span>{{ price.category }}</q-item-label>
+                                                <q-item-label> {{ price.viandsQty }}&nbsp;{{ price.category }}</q-item-label>
                                                 </q-item-section>
                                             </q-item>
             
@@ -430,6 +431,8 @@ export default {
             return this.$lodash.findIndex(arr,val)
         },
         checkIfRemoved(category){
+            console.log(category,'cat')
+            console.log(this.selection, 'sele')
             var index = this.findIndexSelection(this.selection,category)
             if(index == -1){
                 delete this.viandsQty[category]
