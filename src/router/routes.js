@@ -20,6 +20,8 @@ const routes = [
       { path: '/freebies', meta: {requiredAuth: true}, name: 'freebies', component: () => import('pages/freebies.vue') },
       { path: '/extras', meta: {requiredAuth: true}, name: 'extras', component: () => import('pages/extras.vue') },
       { path: '/reservation', meta: {requiredAuth: true}, name: 'reservation', component: () => import('pages/reservation.vue') },
+      { path: '/createpackage', meta: {requiredAuth: true}, name: 'extras', component: () => import('pages/createPackage.vue') },
+
     ]
   },
   { path: '/', component: () => import('pages/login.vue') },

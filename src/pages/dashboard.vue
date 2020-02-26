@@ -15,7 +15,8 @@
             </div>
             <q-separator inset />
             <q-card-section class="text-center q-py-sm"> 
-                <q-btn color="white" label="view reservations" flat />
+
+                <q-btn color="white" label="view reservations" flat @click="$router.push('/createpackage')" />
             </q-card-section>
         </q-card>
         
