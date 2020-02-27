@@ -1,7 +1,7 @@
 <template>
     <q-page padding="">
         <template>
-                 <q-page-sticky position="bottom-right" :offset="[80, 10]">
+                 <q-page-sticky position="top-left" :offset="[20, 10]">
                     <q-btn label="Add New Food" icon="add" color="orange-8" @click="addFoodDialog = true" />
                         <q-tooltip>
                             Add Food

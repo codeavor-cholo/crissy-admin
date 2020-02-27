@@ -64,52 +64,68 @@
                 </q-step>
 
                 <q-step :name="3" v-show="step === 3" title="Select Package" icon="assignment" :done="step > 3">
-                  <q-table grid :data="eventpackages" :columns="columns" row-key=".key" selection="single" :selected.sync="selected">
-                      <template v-slot:item="props">
-                          <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-4 grid-style-transition" color="orange-8" :style="props.selected ? 'transform: scale(0.95);' : ''">
-                              <q-card class="my-card" style="border: 2px solid;border-color: grey;" :class="props.selected ? 'bg-grey-2' : ''">
-                                  <q-card-section side>
-                                      <q-list dense>
-                                      <q-item class="q-mt-sm">
-                                          <q-item-section>
-                                              <span class="full-width text-h6  text-weight-bold">
-                                                <q-checkbox @input="consoleselected" color="orange-8" dense v-model="props.selected" :label="props.row.name" />
-                                              </span>
-                                          </q-item-section>
-                                            <q-item-section side>
-                                              <span class="text-h6 text-weight-bold text-orange-8">P {{props.row.price}}.00</span>
-                                              <span class=" text-orange-8">per pax</span> 
-                                            </q-item-section>
-                                      
-                                      </q-item>    
-                                      <q-separator class="q-mt-sm"/>
-                                      <q-item class="q-mt-sm " v-show="props.row.category">
-                                        <span class="full-width text-weight-bold">FOOD CATEGORIES</span>
-                                        </q-item>
-                                        <q-item v-for="(price, index) in props.row.category" :key="index" class="">
-                                            <q-item-section>
-                                            <q-item-label> {{ price.viandsQty }}<span v-show="price.viandsQty != '1'">&nbsp;</span>{{ price.category }}</q-item-label>
-                                            </q-item-section>
-                                        </q-item>
-        
-                                        <q-item class="q-mt-sm" v-show="props.row.inclusions">
-                                        <span class="full-width text-weight-bold " >INCLUSIONS</span>
-                                        </q-item>
-                                        <q-item v-for="(price, index) in props.row.inclusions" :key="index" class="">
-                                            <q-item-section>
-                                            <q-item-label> {{ price.inclusion }}</q-item-label>
-                                            </q-item-section>
-                                        </q-item>
-                                  </q-list>
-                                  </q-card-section>
-                              </q-card>
-                          </div>
-                      </template>
-                  </q-table>
+                  <q-tabs
+                      v-model="tab"
+                      class="text-orange-8 bg-grey-2"
+                      align="justify"
+                      @click="returnNull"
+                  >
+                      <q-tab name="PER PAX"  label="PER PAX PACKAGES" />
+                      <q-tab name="FIXED" label="FIXED PAX PACKAGES" />
+                  </q-tabs>
+                  <q-separator  />
+                          <h6 class="q-my-sm text-weight-light full-width text-center" style="font-size:1.2em;">Click the card to select package.</h6>
+                          <q-table grid :data="tab == 'PER PAX' ? returnPerPax : returnFixed" :columns="columns" :filter="filter" class="full-width align-center " :selected.sync="selectedPackage" row-key="name" selection="single">
+                          <template v-slot:item="props">
+                              <div class="q-pa-xs col-xs-12 col-sm-6 col-md-6 col-lg-6 grid-style-transition " :style="props.selected ? 'transform: scale(0.95);' : ''" >
+                                  <q-card class="my-card cursor-pointer"  style="border-radius:20px" @click.native="props.selected = !props.selected" :class="props.selected ? 'bg-orange-8 text-white' : 'text-grey-8'">
+                                      <q-card-section class="">
+                                          <q-list dense>
+                                          <q-item class="q-mt-sm">
+                                              <q-item-section>
+                                                  <span class="full-width text-h6  text-weight-bold">{{props.row.name}}</span>
+                                              </q-item-section>
+                                              <q-item-section side :class="props.selected ? 'bg-orange-8 text-white' : 'text-orange-8'">
+                                                  <span class="text-h6 text-weight-bold">P {{props.row.price}}.00</span><span></span>
+                                                  
+                                                  <span class="" v-show="tab == 'FIXED'">for <span class="text-weight-bold">{{props.row.adultPax}}</span>
+                                                        
+                                                      <span v-show="props.row.withKid"> adults</span>
+                                                      <span v-show="props.row.withKid == false">PAX</span>
+                                                  </span> 
+                                                  <span class="" v-show="props.row.withKid">& <span class="text-weight-bold">{{props.row.kidPax}}</span> kids</span> 
+                                                  <span class="" v-show="tab == 'PER PAX'">per pax</span> 
+                                              </q-item-section>
+                                          
+                                          </q-item>     
+                                          <q-separator  inset class="q-mt-sm" />           
+                                          <q-item class="q-mt-sm " v-show="props.row.category">
+                                          <span class="full-width text-weight-bold">FOOD CATEGORIES</span>
+                                          </q-item>
+                                          <q-item v-for="(price, index) in props.row.category" :key="index" class="">
+                                              <q-item-section>
+                                              <q-item-label> {{ price.viandsQty }}&nbsp;{{ price.category }}</q-item-label>
+                                              </q-item-section>
+                                          </q-item>
+          
+                                          <q-item class="q-mt-sm" v-show="props.row.inclusions">
+                                          <span class="full-width text-weight-bold " >INCLUSIONS</span>
+                                          </q-item>
+                                          <q-item v-for="(price, index) in props.row.inclusions" :key="index" class="">
+                                              <q-item-section>
+                                              <q-item-label> {{ price.inclusion }}</q-item-label>
+                                              </q-item-section>
+                                          </q-item>
+                                      </q-list>
+                                      </q-card-section>
+                                  </q-card>
+                              </div>
+                          </template>
+                      </q-table>
                 </q-step>
 
                 <q-step :name="4" v-show="step === 4" title="Select Food" icon="add_comment">
-                  <div v-for="(food,i) in foodChoice" :key="i" v-show="selected != null">
+                  <div v-for="(food,i) in foodChoice" :key="i" v-show="selectedPackage != null">
                       <span class="q-mb-none q-mt-md text-subtitle2"> Select <span class="text-teal text-h6 text-weight-bolder">{{returnLimit(food.category)}}</span> Choice<span v-show="returnLimit(food.category) > 1">s</span> of {{food.category}}  </span>
                       <div class="row">
                         <q-img v-for="(choice,j) in food.foodChoices" :key="j" :src="choice.foodPic" :ratio="1" class="col-3 q-ma-md rounded-borders" :style="returnSelectedStatus(choice) ? 'transform: scale(0.95);border: 4px solid;border-color: #010A43;' : ''">
@@ -318,8 +334,8 @@
 
                 <template v-slot:navigation>
                   <q-stepper-navigation align="right">
-                    <q-btn v-if="step > 1" flat style="color: #010A43" @click="$refs.stepper.previous()" label="Back" class="q-ml-sm" />
-                    <q-btn v-show="step < 8" @click="$refs.stepper.next()" color="orange-8" :label="step === 8 ? 'Finish' : 'Continue'" />
+                    <q-btn v-if="step > 1" flat style="color: #010A43" @click="stepBacker" label="Back" class="q-ml-sm" />
+                    <q-btn v-show="step < 8" @click="stepChecker" color="orange-8" :label="step === 8 ? 'Finish' : 'Continue'" />
                   </q-stepper-navigation>
                 </template>
               </q-stepper>
@@ -332,7 +348,7 @@
                           <div class="column items-center text-h6">Order Details</div>
                       </div>
                       <div class="row">
-                          <div class="q-pa-sm col-6">
+                          <div v-show="this.tab === 'PER PAX'" class="q-pa-sm col-6">
                               <div><b>Choice Of Food:</b></div>
                                 <q-scroll-area style="height:30vh" :visible="true">
                                   <div class="q-px-md" v-for="(choice,i) in returnChoiceOfFood" :key="i">
@@ -344,10 +360,34 @@
                                   </div>
                                 </q-scroll-area>
                           </div>
-                          <div class="q-pa-sm col-6"> 
+                          <div v-show="this.tab === 'FIXED'" class="q-pa-sm col-6">
+                              <div><b>Choice Of Food:</b></div>
+                                <q-scroll-area style="height:30vh" :visible="true">
+                                  <div class="q-px-md" v-for="(choice,i) in returnFree.category" :key="i">
+                                    <!-- <span class="text-weight-bold">{{choice.category}} <q-chip size="sm" :color="choice.foodChoices.length == returnLimit(choice.category) ? 'teal' : 'pink-6'" class="text-white" :label="choice.foodChoices.length+' / '+returnLimit(choice.category)" /></span> -->
+                                    <!-- <div class="q-px-sm q-mb-sm row" v-for="(pick,q) in choice.foodChoices" :key="q"> -->
+                                      <div dense class="col q-mr-sm">x{{choice.viandsQty}} {{choice.category}}</div>
+                                      <!-- <div dense class="col-1 text-weight-bold">x 1</div> -->
+                                    <!-- </div> -->
+                                  </div>
+                                </q-scroll-area>
+                          </div>
+                          <div v-show="this.tab === 'PER PAX'" class="q-pa-sm col-6"> 
                               <div><b>Inclusions: </b></div>
                                 <q-scroll-area style="height:30vh" :visible="true">
                                   <q-list v-for="(inc,i) in returnSelectedPackageInclusion" :key="i" dense>
+                                    <q-item>
+                                        <q-item-section>
+                                            <q-item-label lines="1">{{inc.inclusion}}</q-item-label>
+                                        </q-item-section>
+                                    </q-item>
+                                  </q-list>
+                                </q-scroll-area>
+                          </div>
+                          <div v-show="this.tab === 'FIXED'" class="q-pa-sm col-6"> 
+                              <div><b>Inclusions: </b></div>
+                                <q-scroll-area style="height:30vh" :visible="true">
+                                  <q-list v-for="(inc,i) in returnFree.inclusions" :key="i" dense>
                                     <q-item>
                                         <q-item-section>
                                             <q-item-label lines="1">{{inc.inclusion}}</q-item-label>
@@ -362,7 +402,7 @@
                       </div>
                       <div class="row">
                         <div class="q-pa-sm col-6">
-                            <div>
+                            <div v-show="this.tab === 'PER PAX'">
                                 <div><b>Services:</b> <strong>{{returnSelectedMinMaxServices}}</strong></div>
                                 <q-scroll-area style="height:35vh" :visible="true">
                                 <q-item v-show="servicesQty[i.services] != 0" dense v-for="(i, index) in this.servicesSelected" :key="index">
@@ -373,15 +413,35 @@
                                 </q-item>
                                 </q-scroll-area>
                             </div>
+                            <div v-show="this.tab === 'FIXED'">
+                                <div><b>Services:</b></div>
+                                <q-scroll-area style="height:35vh" :visible="true">
+                                <q-item dense v-for="(i, index) in this.returnFree.services" :key="index">
+                                    <q-item-section class="">
+                                        <q-item-label dense>{{i.services}}</q-item-label>
+                                    </q-item-section>
+                                </q-item>
+                                </q-scroll-area>
+                            </div>
                         </div>
                         <div class="q-pa-sm col-6">
-                            <div>
+                            <div v-show="this.tab === 'PER PAX'">
                                 <div><b>Add-Ons:</b> <strong>{{returnSelectedMinMaxAddons}}</strong></div>
                                 <q-scroll-area style="height:35vh" :visible="true">
                                 <q-item dense v-for="(i, index) in this.addonsSelected" :key="index">
                                     <q-item-section class="">
                                         <q-item-label dense v-if="i.price == undefined">{{addonsQty[i.addons]}}x {{i.addons}}</q-item-label>
                                         <q-item-label dense v-else>{{addonsQty[i.addons]}}<b v-show="addonsQty[i.addons] != 0">x</b> {{i.addons+' ('+ i.price +' php)'}}</q-item-label>
+                                    </q-item-section>
+                                </q-item>
+                                </q-scroll-area>
+                            </div>
+                            <div v-show="this.tab === 'FIXED'">
+                                <div><b>Add-Ons:</b></div>
+                                <q-scroll-area style="height:35vh" :visible="true">
+                                <q-item dense v-for="(i, index) in this.returnFree.addons" :key="index">
+                                    <q-item-section class="">
+                                        <q-item-label dense>{{i.addons}}</q-item-label>
                                     </q-item-section>
                                 </q-item>
                                 </q-scroll-area>
@@ -405,6 +465,8 @@ export default {
   },
   data () {
     return {
+        filter: '',
+        selectedPackage: [],
         enterAmount: 0,
         loading: false,
         amount: 0,
@@ -421,6 +483,7 @@ export default {
         addonsSelected: [],
         addonsQty: [],
         Packages: [],
+        tab: 'PER PAX',
         Food: [],
         servicesQty: [],
         choiceOfFood: [],
@@ -441,12 +504,13 @@ export default {
         date: date.formatDate(new Date(),'YYYY-MM-DD'),
         options: [
            { label: 'Full Payment', value: 'Full Payment' },
-           { label: 'Down Payment', value: 'Down Payment' }
+           { label: 'Down Payment', value: 'Down Payment' },
+           { label: 'Reservation Fee', value: 'Reservation Fee' }
         ],
         columns: [
-          { name: 'name', required: true, label: 'Package name', align: 'center', field: 'name', sortable: true },
-          { name: 'price', align: 'center', label: 'Package Per Head Price', field: 'price', sortable: true },
-        ]
+            { name: 'name', required: true, label: 'Package name', align: 'center', field: 'name', sortable: true },
+            { name: 'price', align: 'center', label: 'Package Per Head Price', field: 'price', sortable: true },
+        ],
     }
   },
   mounted(){
@@ -480,6 +544,23 @@ export default {
             })
   },
   computed: {
+      returnFree(){
+         if(this.selectedPackage.length === 0){
+            return []
+         } else {
+            return this.selectedPackage[0]
+         }
+      },
+      returnPerPax(){
+        return this.Packages.filter(a=>{
+            return a.type == undefined && a.event == this.selectEvent
+        })
+      },
+      returnFixed(){
+        return this.Packages.filter(a=>{
+            return a.type == 'FIXED' && a.event == this.selectEvent
+        })        
+      },
       totalpayment(){
           try {
                 let totalpack =  parseInt(this.totalPackPrice) + parseInt(this.returnSelectedMinMaxServices) + parseInt(this.returnSelectedMinMaxAddons)
@@ -497,15 +578,15 @@ export default {
             }
       },
       packPrice(){
-        if(this.selected.length == 0){
+        if(this.selectedPackage.length == 0){
           return 0
         }else{ 
-          return this.selected[0].price
+          return this.selectedPackage[0].price
         }
       },
       totalPackPrice(){
           try {
-                let totalpack =  parseInt(this.pax) * parseInt(this.selected[0].price)
+                let totalpack =  parseInt(this.pax) * parseInt(this.selectedPackage[0].price)
                 return totalpack
             } catch(err){
                 return 0
@@ -596,14 +677,14 @@ export default {
       },
       returnSelectedPackageInclusion(){
         try {
-          return this.selected[0].inclusions
+          return this.selectedPackage[0].inclusions
         } catch (err) {
           return []
         }
       },
       foodChoice(){
         try {
-          let category = this.selected[0].category
+          let category = this.selectedPackage[0].category
           console.log(category)
           let foodWithPriceInCategory = []
           let foods =  this.Food
@@ -679,6 +760,35 @@ export default {
         },
   },
   methods: {
+    stepBacker(){
+        if(this.step === 8){
+            if(this.tab === 'FIXED'){
+                this.step = 3
+            } else {
+              this.$refs.stepper.previous()
+            }
+        }else{
+              this.$refs.stepper.previous()
+        }
+    },
+    stepChecker(){
+        if(this.step === 1){
+            this.$refs.stepper.next()
+        } else if(this.step === 2){
+            this.$refs.stepper.next()
+        } else if(this.step === 3){
+            if(this.tab === 'FIXED'){
+                this.step = 8
+            } else {
+              this.$refs.stepper.next()
+            }
+        } else{
+            this.$refs.stepper.next()
+        }
+    },
+    returnNull(){
+       this.selectedPackage = []
+    },
     formatTimeInput(time){
       //get time to format for display
       let baseDate = new Date(2020,1,1)
@@ -700,7 +810,7 @@ export default {
             clientEmail: this.email,
             clientStartTime: this.formatTimeInput(this.starttime),
             clientEndTime: this.formatTimeInput(this.endtime),
-            clientSelectPackage: this.selected[0],
+            clientSelectPackage: this.selectedPackage[0],
             clientFoodChoice: this.choiceOfFood,
             clientServices: this.servicesSelected,
             clientAddons: this.addonsSelected,
@@ -743,7 +853,7 @@ export default {
                   this.email = ''
                   this.starttime = date.formatDate(new Date(), '10:50'),
                   this.endtime = date.formatDate(new Date(), '10:50'),
-                  this.selected = []
+                  this.selectedPackage = []
                   this.choiceOfFood = []
                   this.servicesSelected = []
                   this.addonsSelected = []
@@ -762,7 +872,7 @@ export default {
             clientEmail: this.email,
             clientStartTime: this.formatTimeInput(this.starttime),
             clientEndTime: this.formatTimeInput(this.endtime),
-            clientSelectPackage: this.selected[0],
+            clientSelectPackage: this.selectedPackage[0],
             clientFoodChoice: this.choiceOfFood,
             clientServices: this.servicesSelected,
             clientAddons: this.addonsSelected,
@@ -805,19 +915,28 @@ export default {
                   this.email = ''
                   this.starttime = date.formatDate(new Date(), '10:50'),
                   this.endtime = date.formatDate(new Date(), '10:50'),
-                  this.selected = []
+                  this.selectedPackage = []
                   this.choiceOfFood = []
                   this.servicesSelected = []
                   this.addonsSelected = []
                   this.step = 1
     },
     amounttopay(){
-         if(this.selectPayment.value == 'Full Payment'){
+           if(this.tab == 'FIXED' && this.selectPayment.value == 'Full Payment'){
+           this.amount = this.returnFree.price
+           this.enterAmount = this.returnFree.price
+         } else if(this.selectPayment.value == 'Down Payment' && this.tab == 'FIXED'){
+           this.amount = parseInt(this.returnFree.price) * .50
+           this.enterAmount = parseInt(this.returnFree.price) * .50
+         } else if(this.selectPayment.value == 'Full Payment'){
            this.amount = this.totalpayment
            this.enterAmount = this.totalpayment
-         }else{
+         } else if(this.selectPayment.value == 'Down Payment'){
            this.amount = this.downpayment
            this.enterAmount = this.downpayment
+         } else{
+           this.amount = 5000
+           this.enterAmount = 5000
          }
       },
     consoleChoice(){
@@ -852,7 +971,7 @@ export default {
     },
     returnLimit(categoryname){
       try {
-        let category = this.selected[0].category
+        let category = this.selectedPackage[0].category
         let limit = category.filter(a=>{
           return a.category == categoryname
         })
@@ -863,7 +982,7 @@ export default {
       }
     },
       consoleselected(){
-                console.log(this.selected, 'eventssss')
+                console.log(this.selectedPackage, 'eventssss')
     },
       returnSelectedStatus(choice){
       let count = this.$lodash.findIndex(this.choiceOfFood, a=>{

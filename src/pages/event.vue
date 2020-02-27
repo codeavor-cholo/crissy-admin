@@ -30,7 +30,7 @@
                             </template>
                         </q-table>
         <!--FLOATING BUTTON-->
-        <q-page-sticky position="bottom-right" :offset="[80, 50]">
+        <q-page-sticky position="top-left" :offset="[20, 10]">
             <q-btn label="Add New Event" icon="add" color="orange-8" @click="addEventDialog = true, isEdit = false" />
                 <q-tooltip>
                     Add Event
