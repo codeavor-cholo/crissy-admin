@@ -763,7 +763,7 @@ export default {
     stepBacker(){
         if(this.step === 8){
             if(this.tab === 'FIXED'){
-                this.step = 3
+                this.step = 4
             } else {
               this.$refs.stepper.previous()
             }
@@ -777,6 +777,8 @@ export default {
         } else if(this.step === 2){
             this.$refs.stepper.next()
         } else if(this.step === 3){
+            this.$refs.stepper.next()
+        } else if(this.step === 4){
             if(this.tab === 'FIXED'){
                 this.step = 8
             } else {
