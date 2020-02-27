@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "itsgando-bc658"
+  },
+  "targets": {
+    "itsgando-bc658": {
+      "hosting": {
+        "admin": [
+          "crissy-admin"
+        ]
+      }
+    }
+  }
+}
