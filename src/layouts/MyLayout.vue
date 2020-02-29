@@ -214,6 +214,7 @@ export default {
         { icon: 'mdi-briefcase-plus', text: 'Position' },
         { icon: 'mdi-city', text: 'City' },
         { icon: 'mdi-palette', text: 'Motif' },
+        { icon: 'mdi-brightness-6', text: 'Theme' },
         { icon: 'mdi-calendar', text: 'Event' },
         { icon: 'mdi-format-list-bulleted-type', text: 'Food Category' },
         { icon: 'mdi-food', text: 'Food' },
@@ -256,6 +257,8 @@ export default {
                 this.$router.push('/foodcategory')
             } else if(party[0].text == 'City') {
                 this.$router.push('/city')
+            } else if(party[0].text == 'Theme') {
+                this.$router.push('/theme')
             } else if(party[0].text == 'Food') {
                 this.$router.push('/food')
             }else if(party[0].text == 'Motif') {
