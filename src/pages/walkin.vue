@@ -4,7 +4,7 @@
               <q-stepper v-model="step" ref="stepper" color="deep-orange-4" vertical falt active-color="orange-8" inactive-color="blue-10" animated>
                 <q-step :name="1" v-show="step === 1" title="Select Available Date" icon="settings" :done="step > 1">
                   <div class="column items-center">
-                     <q-date v-model="date" minimal class="shadow-0" mask="YYYY-MM-DD" color="orange-8" ></q-date> 
+                     <q-date v-model="date" event-color="orange-8" :events="eventsReserve" minimal class="shadow-0" mask="YYYY-MM-DD" color="orange-8" ></q-date> 
                   </div>
                 </q-step>
 
@@ -13,14 +13,14 @@
                     <q-input rounded color="orange-8" outlined class="col-4 q-pa-sm" v-model="fname" label="Enter First Name" />
                     <q-input rounded color="orange-8" outlined class="col-4 q-pa-sm" v-model="lname" label="Enter Last Name" />
                     <div class="q-pa-sm col-4">
-                      <q-input rounded color="orange-8" outlined v-model="date" mask="date">
+                      <q-input rounded color="orange-8" event-color="orange-8" :events="eventsReserve" outlined v-model="date" mask="date">
                         <template v-slot:append>
                           <q-icon name="event" color="orange-8" class="cursor-pointer">
                             <q-tooltip>
                               Select New Date
                             </q-tooltip>
                             <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                              <q-date v-model="date" mask="YYYY-MM-DD" @input="() => $refs.qDateProxy.hide()" />
+                              <q-date v-model="date" event-color="orange-8" :events="eventsReserve" mask="YYYY-MM-DD" @input="() => $refs.qDateProxy.hide()" />
                             </q-popup-proxy>
                           </q-icon>
                         </template>
@@ -564,6 +564,7 @@ export default {
         step: 1,
         splitterModel: 50,
         Category: [],
+        Reservation: [],
         date: date.formatDate(new Date(),'YYYY-MM-DD'),
         options: [
            { label: 'Full Payment', value: 'Full Payment' },
@@ -577,6 +578,10 @@ export default {
     }
   },
   mounted(){
+        this.$binding('Reservation', this.$firestoreApp.collection('Reservation'))
+            .then(Reservation => {
+            console.log(Reservation, 'Reservation')
+            }),
         this.$binding('Motif', this.$firestoreApp.collection('Motif'))
             .then(Motif => {
             console.log(Motif, 'Motif')
@@ -611,6 +616,13 @@ export default {
             })
   },
   computed: {
+      eventsReserve(){
+            let events = this.$lodash.map(this.Reservation, a=>{
+                let reserve = a.clientReserveDate
+                return date.formatDate(reserve,'YYYY/MM/DD')
+            })
+            return events
+        },
       cpPrice(){
         if(this.choiceOfFood.length === 0){
             return 0
@@ -686,9 +698,8 @@ export default {
         }
       },
       mergePricingAddons(){
-
                 let keys = this.$lodash.keys(this.addonsQty)
-                console.log(keys,'keys')
+                console.log(keys,'keys')  
 
                 if(this.addonsSelected.length != keys.length){
                     console.log('no pricing')
@@ -965,8 +976,8 @@ export default {
             clientSelectPackage: this.tab === 'CUSTOMIZE' ? 'CUSTOMIZE' : this.selectedPackage[0],
             clientPackageType: this.tab,
             clientFoodChoice: this.choiceOfFood,
-            clientServices: this.servicesSelected,
-            clientAddons: this.addonsSelected,
+            clientServices: this.mergePricingServices,
+            clientAddons: this.mergePricingAddons,
             clientTotalPayment: this.totalpayment,
             clientPaidAmount: this.enterAmount,
             clientPayDetails: this.paydetails,
@@ -983,6 +994,7 @@ export default {
                   clientPayDetails: this.paydetails,
                   clientTokenID: this.token.id,
                   clientPaymentType: 'CARD',
+                  clientPaymentDate: date.formatDate(new Date(), 'YYYY-MM-DD')
               }
                   this.$firestoreApp.collection('Payments').add(paymentDetails)
                   .then(()=>{
@@ -1028,8 +1040,8 @@ export default {
             clientSelectPackage: this.tab === 'CUSTOMIZE' ? 'CUSTOMIZE' : this.selectedPackage[0],
             clientPackageType: this.tab,
             clientFoodChoice: this.choiceOfFood,
-            clientServices: this.servicesSelected,
-            clientAddons: this.addonsSelected,
+            clientServices: this.mergePricingServices,
+            clientAddons: this.mergePricingAddons,
             clientTotalPayment: this.totalpayment,
             clientPaidAmount: this.enterAmount,
             clientPayDetails: 'CASH',
@@ -1043,9 +1055,10 @@ export default {
               let key = ref.id
               let paymentDetails = {
                   clientReservationKey: ref.id,
-                  clientPayDetails: 'CARD',
-                  clientTokenID: 'CARD',
-                  clientPaymentType: 'CARD',
+                  clientPayDetails: 'CASH',
+                  clientTokenID: 'CASH',
+                  clientPaymentType: 'CASH',
+                  clientPaymentDate: date.formatDate(new Date(), 'YYYY-MM-DD')
               }
                   this.$firestoreApp.collection('Payments').add(paymentDetails)
                   .then(()=>{
