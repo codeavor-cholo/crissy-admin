@@ -61,6 +61,22 @@
                     <q-select rounded class="q-pa-sm col-4" color="orange-8" outlined v-model="selectEvent" :options="eventOpt" emit-value map-options label="Select Event" />
                     <q-input rounded color="orange-8" outlined class="col-4 q-pa-sm" v-model="email" label="Enter Email Address" />
                   </div>  
+                  <div>
+                      <q-badge color="orange-8" outline class="column items-center full-width"><span class="q-mb-none text-h6 text-weight-light"> Select 1 Theme</span></q-badge>
+                      <div class="row q-mt-md q-mb-md">
+                            <q-card class="my-card col-3 q-ma-sm cursor-pointer" v-for="(choice,j) in this.Theme" :key="j" style="border-radius:20px;">
+                            <q-img :src="choice.themePic" :ratio="3/2" />
+                            <q-card-section>
+                              <div class="row no-wrap items-center">
+                                <q-checkbox color="orange-8" @input="themeQty" v-model="choiceOfTheme" :val="choice"/>
+                                <div >
+                                  {{choice.themeName}}
+                                </div>
+                              </div>
+                            </q-card-section>
+                            </q-card>
+                      </div>
+                  </div>
                 </q-step>
 
                 <q-step :name="3" v-show="step === 3" title="Select Package" icon="assignment" :done="step > 3">
@@ -75,9 +91,9 @@
                       <q-tab name="CUSTOMIZE" label="CUSTOMIZE PACKAGE" />
                   </q-tabs>
                   <q-separator  />
-                    <div v-show="tab !== 'CUSTOMIZE'">
-                          <h6 class="q-my-sm text-weight-light full-width text-center" style="font-size:1.2em;">Click the card to select package.</h6>
-                          <q-table grid :data="tab == 'PER PAX' ? returnPerPax : returnFixed" :columns="columns" :filter="filter" class="full-width align-center " :selected.sync="selectedPackage" row-key="name" selection="single">
+                  <div v-show="tab !== 'CUSTOMIZE'">
+                      <h6 class="q-my-sm text-weight-light full-width text-center" style="font-size:1.2em;">Click the card to select package.</h6>
+                      <q-table grid :data="tab == 'PER PAX' ? returnPerPax : returnFixed" :columns="columns" :filter="filter" class="full-width align-center " :selected.sync="selectedPackage" row-key="name" selection="single">
                           <template v-slot:item="props">
                               <div class="q-pa-xs col-xs-12 col-sm-6 col-md-6 col-lg-6 grid-style-transition " :style="props.selected ? 'transform: scale(0.95);' : ''" >
                                   <q-card class="my-card cursor-pointer"  style="border-radius:20px" @click.native="props.selected = !props.selected, consoleselected()" :class="props.selected ? 'bg-orange-8 text-white' : 'text-grey-8'">
@@ -400,8 +416,72 @@
               <q-page-sticky position="top-right" :offset="[10, 8]">
                 <q-card class="my-card" style="height: 540px; width: 440px">
                     <q-card-section>
-                      <div class="column items-center q-pb-sm q-pt-none q-mt-none">
-                          <div class="column items-center text-h6">Order Details</div>
+                      <div class="row items-center q-pb-sm q-pt-none q-mt-none">
+                          <div class="col-3 items-center text-weight-bold">Order Details</div>
+                          <div class="col-9">
+                            <q-btn-dropdown class="full-width" color="orange-8" dense flat label="View Payment Details">
+                              <q-list dense>
+                                <q-item>
+                                  <q-item-section>
+                                    <q-item-label>Pax:</q-item-label>
+                                  </q-item-section>
+                                  <q-item-section side>
+                                    <strong v-show="this.tab != 'FIXED'">{{pax}} Pax</strong><strong v-show="this.tab === 'FIXED'">{{returnFree.adultPax}}adults & {{returnFree.kidPax}}kids</strong>
+                                  </q-item-section>
+                                </q-item>
+                              </q-list>
+                              <q-list dense>
+                                <q-item v-show="this.tab != 'CUSTOMIZE'">
+                                  <q-item-section>
+                                    <q-item-label>Package Price:</q-item-label>
+                                  </q-item-section>
+                                  <q-item-section side>
+                                    <strong>{{packPrice}}<b v-if="this.tab != 'FIXED'"> Per Pax</b> <b v-else> Pesos</b></strong>
+                                  </q-item-section>
+                                </q-item>
+                              </q-list>
+                              <q-list dense v-show="this.tab != 'FIXED'">
+                                <q-item>
+                                  <q-item-section>
+                                    <q-item-label>Total Package Price:</q-item-label>
+                                  </q-item-section>
+                                  <q-item-section side>
+                                     <b v-if="this.tab != 'CUSTOMIZE'">{{totalPackPrice}}</b><b v-else>{{cpPrice}} per pax</b>
+                                  </q-item-section>
+                                </q-item>
+                              </q-list>
+                              <q-list dense v-show="this.servicesSelected.length != 0" >
+                                <q-item>
+                                  <q-item-section>
+                                    <q-item-label>Total Services Price:</q-item-label>
+                                  </q-item-section>
+                                  <q-item-section side>
+                                    <b>{{returnSelectedMinMaxServices}} pesos</b>
+                                  </q-item-section>
+                                </q-item>
+                              </q-list>
+                              <q-list>
+                                <q-item dense v-show="this.addonsSelected.length != 0">
+                                  <q-item-section>
+                                    <q-item-label>Total Add-Ons Price:</q-item-label>
+                                  </q-item-section>
+                                  <q-item-section side>
+                                    <b>{{returnSelectedMinMaxAddons}} pesos</b>
+                                  </q-item-section>
+                                </q-item>
+                              </q-list>
+                              <q-list dense>
+                                <q-item>
+                                  <q-item-section>
+                                    <q-item-label>Total Payment:</q-item-label>
+                                  </q-item-section>
+                                  <q-item-section side>
+                                    <b>{{totalpayment}}</b>
+                                  </q-item-section>
+                                </q-item>
+                              </q-list>
+                            </q-btn-dropdown>
+                          </div>
                       </div>
                       <!-- DISPLAYING OF FOODS FOR CUSTOMIZE FIXED AND PER PAX  -->
                       <div class="row">
@@ -527,6 +607,7 @@ export default {
   },
   data () {
     return {
+        choiceOfTheme: [],
         filter: '',
         selectedPackage: [],
         enterAmount: 0,
@@ -549,6 +630,7 @@ export default {
         Food: [],
         servicesQty: [],
         choiceOfFood: [],
+        choiceOfTheme: [],
         choiceOfInclusions: [],
         Services: [],
         Addons: [],
@@ -565,6 +647,7 @@ export default {
         splitterModel: 50,
         Category: [],
         Reservation: [],
+        Theme: [],
         date: date.formatDate(new Date(),'YYYY-MM-DD'),
         options: [
            { label: 'Full Payment', value: 'Full Payment' },
@@ -575,12 +658,20 @@ export default {
             { name: 'name', required: true, label: 'Package name', align: 'center', field: 'name', sortable: true },
             { name: 'price', align: 'center', label: 'Package Per Head Price', field: 'price', sortable: true },
         ],
+        themecolumns: [
+            { themeName: 'name', required: true, label: 'Theme', align: 'center', field: 'themeName', sortable: true },
+            { name: 'themeDescription', align: 'center', label: 'Description', field: 'themeDescription', sortable: true },
+        ],
     }
   },
   mounted(){
         this.$binding('Reservation', this.$firestoreApp.collection('Reservation'))
             .then(Reservation => {
             console.log(Reservation, 'Reservation')
+            }),
+         this.$binding('Theme', this.$firestoreApp.collection('Theme'))
+            .then(Theme => {
+            console.log(Theme, 'Theme')
             }),
         this.$binding('Motif', this.$firestoreApp.collection('Motif'))
             .then(Motif => {
@@ -869,6 +960,9 @@ export default {
         },
   },
   methods: {
+    consoleTheme(){
+        console.log(this.choiceOfTheme, 'theme')
+    },
     stepBacker(){
         if(this.step === 3){
           if(this.selectedPackage.length === 0){
@@ -973,6 +1067,7 @@ export default {
             clientEmail: this.email,
             clientStartTime: this.formatTimeInput(this.starttime),
             clientEndTime: this.formatTimeInput(this.endtime),
+            clientSelectTheme: this.choiceOfTheme,
             clientSelectPackage: this.tab === 'CUSTOMIZE' ? 'CUSTOMIZE' : this.selectedPackage[0],
             clientPackageType: this.tab,
             clientFoodChoice: this.choiceOfFood,
@@ -1023,6 +1118,8 @@ export default {
                   this.servicesSelected = []
                   this.addonsSelected = []
                   this.step = 1
+                  this.choiceOfTheme = []
+                  this.$router.push('/reservation')
     },
     reservenowCash(){
         let reserveDetails = {
@@ -1037,6 +1134,7 @@ export default {
             clientEmail: this.email,
             clientStartTime: this.formatTimeInput(this.starttime),
             clientEndTime: this.formatTimeInput(this.endtime),
+            clientSelectTheme: this.choiceOfTheme,
             clientSelectPackage: this.tab === 'CUSTOMIZE' ? 'CUSTOMIZE' : this.selectedPackage[0],
             clientPackageType: this.tab,
             clientFoodChoice: this.choiceOfFood,
@@ -1087,6 +1185,8 @@ export default {
                   this.servicesSelected = []
                   this.addonsSelected = []
                   this.step = 1
+                  this.choiceOfTheme = []
+                  this.$router.push('/reservation')
     },
     amounttopay(){
            if(this.tab == 'FIXED' && this.selectPayment.value == 'Full Payment'){
@@ -1111,6 +1211,19 @@ export default {
     },
     consoleServices(){
       console.log(this.servicesSelected,'select')
+    },
+    themeQty(){
+        if(this.choiceOfTheme.length > 1){
+        this.$q.dialog({
+            title: 'Selection Max Reached',
+            message: 'Unchecked The First Choice To Select Another One',
+            ok: 'Ok',
+            persistent: true
+          }).onOk(() => {
+            this.choiceOfTheme.splice(this.choiceOfTheme.length-1,1)
+            console.log('removed last')
+          })
+      }
     },
     checkQty(food,qty,category){
       console.log(food)

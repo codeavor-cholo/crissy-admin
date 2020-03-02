@@ -179,26 +179,26 @@
                                     <b class="q-pa-sm col-12">Paid Amount: <i>P</i> {{this.selectedReservation.clientPaidAmount}}</b>
                                 </div>
                                 <div class="col-6 row">
-                                    <b btnclass="col q-pa-sm">Current Balance: <q-btn flat dense @click="payamount" color="orange-8"><i>P&nbsp;</i> {{currentBalance}}</q-btn></b>
+                                    <b btnclass="col q-pa-sm">Current Balance: <q-btn flat dense @click="payamount" color="orange-8"><i v-show="this.currentBalance != 0">P&nbsp;</i> {{this.currentBalance === 0 ? 'NO BALANCE' : this.currentBalance,}}</q-btn></b>
                                 </div>
                             </div>
-                            <div class="q-pa-sm">
+                            <div v-show="this.currentBalance != 0" class="q-pa-sm">
                                 <q-input type="number" class="col" color="orange-8" outlined v-model="enterAmount" label="Enter Amount To Pay"/>
                             </div>
                             <q-separator inset/>
-                            <div class="column items-center">
+                            <div v-show="this.currentBalance != 0" class="column items-center">
                                 <div class="column items-center text-weight-bold">Pay via Card</div>
                             </div>
-                            <div class="container q-pa-sm">
+                            <div v-show="this.currentBalance != 0" class="container q-pa-sm">
                                 <stripe-elements ref="elementsRef" color="orange-8" :pk="publishableKey" :amount="amount" @token="tokenCreated" @loading="loading = $event" outline class="col q-mr-md">
                                 </stripe-elements>
                                 <q-btn outlined color="orange-8" class="col full-width" @click="submit">PAY&nbsp;&nbsp;&nbsp;<b>PHP&nbsp;{{amountOnCard}}</b></q-btn>
                                 <!-- <button @click="submit">Pay ${{amount / 100}}</button> -->
                             </div>
-                            <div class="column items-center">
+                            <div v-show="this.currentBalance != 0" class="column items-center">
                                 <div class="column items-center text-weight-bold">Pay via Cash</div>
                             </div>
-                            <div class="q-pa-sm">
+                            <div v-show="this.currentBalance != 0" class="q-pa-sm">
                                 <q-input type="number" readonly class="q-pa-sm full-width col" color="orange-8" outlined v-model="enterAmount" label="Amount To Pay on Cash"/>
                                 <q-btn outlined color="orange-8" class="col full-width" @click="updatePaymentCash">PAY&nbsp;&nbsp;&nbsp;<b>PHP&nbsp;{{enterAmount}}</b></q-btn>
                             </div>
@@ -273,6 +273,14 @@ export default {
                 return this.amount = 0 
             }else{
                 return this.amount = this.enterAmount
+            }
+        },
+        returnTheme(){
+            if(this.selectedReservation === []){
+                return []
+            }else{
+                let sr = this.selectedReservation
+                return sr.clientSelectTheme
             }
         },
         returnFree(){
