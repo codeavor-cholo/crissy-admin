@@ -1,12 +1,13 @@
 <template>
     <q-page padding="">
         <template>
-                 <q-page-sticky position="top-left" :offset="[20, 10]">
-                    <q-btn label="Add New Food" icon="add" color="orange-8" @click="addFoodDialog = true" />
+                 <!-- <q-page-sticky position="top-left" :offset="[20, 10]"> -->
+                    <q-btn label="Add New Food" icon="add" color="orange-8" @click="addFoodDialog = true, cancel()">
                         <q-tooltip>
                             Add Food
                         </q-tooltip>
-                </q-page-sticky>
+                    </q-btn>
+                <!-- </q-page-sticky> -->
                     <div>
                         <q-table grid :data="Food" :columns="columns" :pagination.sync="pagination" :filter="filter" class="q-px-sm full-width align-center ">
                             <template v-slot:item="props">
@@ -30,8 +31,8 @@
                                         </q-card-section>
                                         <q-separator  inset />
                                         <q-card-actions align="center" class=" q-pb-md">
-                                            <q-btn flat label="EDIT" icon="edit" color="green"/>
-                                            <q-btn flat label="DELETE" icon="delete"/>
+                                            <q-btn flat label="EDIT" @click="getedit(props.row)" icon="edit" color="green"/>
+                                            <q-btn flat label="DELETE" @click="deletedialog(props.row)" icon="delete"/>
                                         </q-card-actions>
                                         </div>
                                     </q-card>
@@ -41,25 +42,52 @@
                     </div>
         </template>
         <q-dialog v-model="addFoodDialog" persistent>
-            <q-card style="min-width: 400px" >
+            <q-card style="width: 600px" >
                 <q-card-section class="q-pb-none">
-                <div class="text-h6">New Food</div>
+                <div class="text-h6">{{isEdit ? 'Edit Food': 'Add New Food'}}</div>
                 </q-card-section>
 
                 <q-card-section class="q-pa-md">
-                
-                <q-input color="orange-8" class="q-ma-md" v-model="foodNames" label="Food Name"/>
-                <div class="container row q-ma-md">
-                <q-select color="orange-8" class="q-mr-md col" @input="foodPriceByCategory" v-model="selectCategory" :options="categoryOpt" emit-value map-options label="Select Category" />
-                <q-input color="orange-8" class="col-3" type="number" readonly v-model="foodPrice" label="Food Price"/>
+                <div class="row">
+                    <q-input outlined rounded color="orange-8" class="q-ma-sm col-8" v-model="foodNames" label="Food Name"/>
+                    <q-checkbox class="q-ma-sm col-3" color="orange-8" v-model="kidsfood" label="Kiddie Food" />
                 </div>
-                <q-input v-model="description" class="q-ma-md" color="orange-8" label="Food Description" filled type="textarea" />
-                <q-uploader ref="foodref" class="q-ma-md" extensions="'.gif,.GIF,.jpg,.JPG,.jpeg,.JPEG,.png,.PNG'" @added="photoAdded" :url="foodpic" label="Upload Photo" color="orange-8" style="width: 400px;" />
+                <div class="container row q-ma-sm">
+                <q-select outlined rounded color="orange-8" class="q-mr-md col" @input="foodPriceByCategory" v-model="selectCategory" :options="categoryOpt" emit-value map-options label="Select Category" />
+                <q-input outlined rounded color="orange-8" class="col-3" type="number" readonly v-model="foodPrice" label="Food Price"/>
+                </div>
+                <q-input outlined rounded v-model="description" class="q-ma-sm" color="orange-8" label="Food Description" type="textarea" />
+                <div v-if="isEdit">
+                    <q-img :src="this.selectedFood.foodPic" v-show="hideFoodImage" class="full-width" style="height: 300px">
+                        <q-btn @click="hideFoodUploaderTwo = true, hideFoodImage = false" round color="green" icon="mdi-pencil">
+                            <q-tooltip>
+                                Update Image
+                            </q-tooltip>  
+                        </q-btn> 
+                    </q-img>
+                </div>
+                <div v-else v-show="hideFoodUploader">
+                    <q-btn v-show="isEdit = false" @click="hideFoodUploader = false, hideFoodImage = true" flat round dense icon="close">
+                        <q-tooltip>
+                            cancel
+                        </q-tooltip>  
+                    </q-btn> 
+                    <q-uploader outlined rounded ref="foodref" class="q-ma-sm" extensions="'.gif,.GIF,.jpg,.JPG,.jpeg,.JPEG,.png,.PNG'" @added="photoAdded" :url="foodpic" label="Upload Photo" color="orange-8" style="width: 400px;" />
+                </div>
+                <div v-if="isEdit" v-show="hideFoodUploaderTwo">
+                    <q-btn @click="hideFoodUploaderTwo = false, hideFoodImage = true" flat round dense icon="close">
+                        <q-tooltip>
+                            cancel
+                        </q-tooltip>  
+                    </q-btn> 
+                    <q-uploader outlined rounded ref="foodref" class="q-ma-sm" extensions="'.gif,.GIF,.jpg,.JPG,.jpeg,.JPEG,.png,.PNG'" @added="photoAdded" :url="foodpic" label="Upload Photo" color="green" style="width: 400px;" />
+                </div>
                 </q-card-section> 
 
                 <q-card-actions align="right" class="text-primary">
-                <q-btn flat label="Cancel" v-close-popup color="grey-8" />
-                <q-btn flat label="Add Food" @click="addFood" color="orange-8" v-close-popup />
+                <q-btn flat label="Cancel" @click="cancel" v-close-popup color="grey-8" />
+                <q-btn flat v-if="!isEdit" label="Add Food" @click="addFood" color="orange-8" v-close-popup />
+                <q-btn v-if="isEdit" flat label="Update Food" color="orange-8" v-close-popup v-on:click="setTask"/>
                 <!-- <q-btn flat label="merge Food" @click="mergePricing" color="pink-3" /> -->
                 </q-card-actions>
             </q-card>
@@ -71,6 +99,9 @@ let sri = require('simple-random-id')
 export default {
     data(){
         return {
+            hideFoodUploader: true, 
+            hideFoodImage: true,
+            hideFoodUploaderTwo: false,
             filter: '',
             foodPrice: 0,
             Food: [],
@@ -80,11 +111,14 @@ export default {
             storageRef: null,
             description: '',
             selectCategory: '',
+            selectedFood: [],
             foodNames: '',
             foodpic: '',
+            isEdit: false,
             addFoodDialog: false,
             isEdit: false,
             filter: '',
+            kidsfood: false,
             pagination: { sortBy: 'Category', descending: false, page: 1, rowsPerPage: 9},
             columns: [
                 { name: 'foodName', align: 'center', label: 'Food Name', field: 'foodName', sortable: true },
@@ -119,6 +153,131 @@ export default {
         }
     },
     methods:{
+        setTask(){
+            if(this.$refs.foodref.files.length === 0){
+                  var foodBago = {
+                    foodName: this.foodNames,
+                    category: this.selectCategory.value,
+                    foodPrice: this.foodPrice,
+                    foodDescription: this.description,
+                    foodPic: this.selectedFood.foodPic,
+                    foodType: this.kidsfood === true ? 'Kiddie Food' : 'Adult Food'
+                  }
+                  if(this.selectCategory.value === '' && this.foodPrice === '' && this.foodNames === '' && this.description === ''){
+                      this.$q.dialog({
+                      title: 'Field Required!',
+                      message: 'Fill all Requirements?',
+                      ok: 'Ok',
+                      cancel: 'Cancel'
+                    })
+                    }else
+                    this.$q.dialog({
+                    title: 'Update Food',
+                    message: 'Update This Food?',
+                    ok: 'Yes',
+                    cancel: 'Cancel'
+                }).onOk(() => { 
+                    this.$firestoreApp.collection('Food').doc(this.foodID).set(foodBago)
+                    this.$q.notify({
+                            message: 'Food Updated!',
+                            icon: 'mdi-update',
+                            color: 'green',
+                            textColor: 'white',
+                            position: 'center'
+                        })
+                            this.addFoodDialog = false  
+                            this.hideFoodUploaderTwo = false
+                            this.hideFoodImage = true
+                            this.foodNames = ''
+                            this.kidsfood = false
+                            this.selectCategory = ''
+                            this.foodPrice = 0
+                            this.description = ''
+                            this.selectedFood = []
+                })  
+          }else{
+                let vm = this
+                  if(this.selectCategory.value === '' && this.foodPrice === '' && this.foodNames === '' && this.description === ''){
+                        this.$q.dialog({
+                        title: 'Field Required!',
+                        message: 'Fill all Requirements?',
+                        ok: 'Ok',
+                        cancel: 'Cancel'
+                      })
+                      }else
+                      this.$q.dialog({
+                      title: 'Update Food',
+                      message: 'Update This Food?',
+                      ok: 'Yes',
+                      cancel: 'Cancel'
+                  }).onOk(() => { 
+                      vm.uploadFoodPhoto()
+                      .then((user)=>{
+                          var foodBago = {
+                            foodName: this.foodNames,
+                            category: this.selectCategory.value,
+                            foodPrice: this.foodPrice,
+                            foodDescription: this.description,
+                            foodPic: this.newFoodPic,
+                            foodType: this.kidsfood === true ? 'Kiddie Food' : 'Adult Food'
+                          }
+                          this.$firestoreApp.collection('Food').doc(this.foodID).set(foodBago)
+                          this.$q.notify({
+                                  message: 'Food Updated!',
+                                  icon: 'mdi-update',
+                                  color: 'green',
+                                  textColor: 'white',
+                                  position: 'center'
+                              })
+                                this.addFoodDialog = false  
+                                this.hideFoodUploaderTwo = false
+                                this.hideFoodImage = true
+                          })
+                  })
+          }
+        },
+        cancel(){
+            this.foodNames = ''
+            this.kidsfood = false
+            this.selectCategory = ''
+            this.foodPrice = 0
+            this.description = ''
+            this.selectedFood = []
+            this.isEdit = false
+            this.hideFoodImage = true
+        },
+        getedit (task) {
+            console.log(task, 'task')
+            this.selectedFood = task
+            this.foodID = task['.key']
+            this.foodNames = task.foodName
+            this.kidsfood = task.foodType
+            this.selectCategory = { label: task.category, value: task.category }
+            this.foodPrice = task.foodPrice
+            this.description = task.foodDescription
+            this.addFoodDialog = true
+            this.isEdit = true
+        },
+        deletedialog (task) {
+                var id = task['.key']
+                this.$q.dialog({
+                    title: 'Delete Food?',
+                    message: 'Delete This Food?',
+                    ok: 'Yes',
+                    color: 'orange-8',
+                    cancel: 'Cancel'
+                }).onOk(() => { 
+                    this.$firestoreApp.collection('Food').doc(id).delete()
+                    this.$q.notify({
+                            message: 'Food Deleted!',
+                            icon: 'mdi-delete',
+                            color: '#010A43',
+                            textColor: 'white',
+                            position: 'center'
+                        })
+                })
+
+            },
         foodPriceByCategory(){ 
                    let optionss = this.$lodash.filter(this.Category, m => {
 						return m.category === this.selectCategory
@@ -169,7 +328,8 @@ export default {
                             category: this.selectCategory,
                             foodPrice: this.foodPrice,
                             foodDescription: this.description,
-                            foodPic: this.newFoodPic
+                            foodPic: this.newFoodPic,
+                            foodType: this.kidsfood === true ? 'Kiddie Food' : 'Adult Food'
                         }
 
                             vm.$firestoreApp.collection('Food').add(food)
@@ -184,6 +344,7 @@ export default {
                                 this.selectCategory = ''
                                 this.foodPrice = ''
                                 this.description = ''
+                                this.kidsfood = false
                           })
                       }).onCancel(()=>{
                             console.log(this.selectCategory)
