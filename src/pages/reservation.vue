@@ -8,7 +8,7 @@
                 </q-tooltip>
         </q-page-sticky> -->
             <div class="q-mx-lg" >
-                <q-table grid :data="Reservation" :columns="columns" :filter="filter" class="q-px-sm full-width align-center ">
+                <q-table grid :data="Reservation" :columns="columns" :filter="filter"  pagination.sync="pagination" class="q-px-sm full-width align-center ">
                     <template v-slot:item="props">
                         <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-4 grid-style-transition " :style="props.selected ? 'transform: scale(0.95);' : ''">
                             <q-card class="my-card"  style="border-radius:20px" >
@@ -37,6 +37,11 @@
                                     <span class="full-width text-weight-bold">FOOD Choices</span>
                                     </q-item>
                                     <q-item v-for="(price, index) in props.row.clientFoodChoice" :key="index" class="column items-center">
+                                        <q-item-section>
+                                        <q-item-label> {{ price.foodName }}</q-item-label>
+                                        </q-item-section>
+                                    </q-item>
+                                    <q-item v-for="(price, index) in props.row.clientAdditionalFood" :key="index" class="column items-center">
                                         <q-item-section>
                                         <q-item-label> {{ price.foodName }}</q-item-label>
                                         </q-item-section>
@@ -124,6 +129,14 @@
                         <span class="full-width text-weight-bold">FOOD CHOICES</span>
                         </q-item>
                         <q-list dense v-for="(price, index) in this.selectedReservation.clientFoodChoice" :key="index">
+                            <q-item>
+                                <q-item-section>
+                                <li> {{ price.foodName }}</li>
+                                </q-item-section>
+                            </q-item>
+                        </q-list>
+                        <span class="full-width text-weight-bold">Additional Food</span>
+                        <q-list dense v-for="(price, index) in this.selectedReservation.clientAdditionalFood" :key="index">
                             <q-item>
                                 <q-item-section>
                                 <li> {{ price.foodName }}</li>
