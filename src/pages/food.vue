@@ -50,7 +50,7 @@
                 <q-card-section class="q-pa-md">
                 <div class="row">
                     <q-input outlined rounded color="orange-8" class="q-ma-sm col-8" v-model="foodNames" label="Food Name"/>
-                    <q-checkbox class="q-ma-sm col-3" color="orange-8" v-model="kidsfood" label="Kiddie Food" />
+                    <!-- <q-checkbox class="q-ma-sm col-3" color="orange-8" v-model="kidsfood" label="Kiddie Food" /> -->
                 </div>
                 <div class="container row q-ma-sm">
                 <q-select outlined rounded color="orange-8" class="q-mr-md col" @input="foodPriceByCategory" v-model="selectCategory" :options="categoryOpt" emit-value map-options label="Select Category" />
@@ -118,7 +118,7 @@ export default {
             addFoodDialog: false,
             isEdit: false,
             filter: '',
-            kidsfood: false,
+            // kidsfood: false,
             pagination: { sortBy: 'Category', descending: false, page: 1, rowsPerPage: 9},
             columns: [
                 { name: 'foodName', align: 'center', label: 'Food Name', field: 'foodName', sortable: true },
@@ -161,7 +161,7 @@ export default {
                     foodPrice: this.foodPrice,
                     foodDescription: this.description,
                     foodPic: this.selectedFood.foodPic,
-                    foodType: this.kidsfood === true ? 'Kiddie Food' : 'Adult Food'
+                    // foodType: this.kidsfood === true ? 'Kiddie Food' : 'Adult Food'
                   }
                   if(this.selectCategory.value === '' && this.foodPrice === '' && this.foodNames === '' && this.description === ''){
                       this.$q.dialog({
@@ -189,7 +189,7 @@ export default {
                             this.hideFoodUploaderTwo = false
                             this.hideFoodImage = true
                             this.foodNames = ''
-                            this.kidsfood = false
+                            // this.kidsfood = false
                             this.selectCategory = ''
                             this.foodPrice = 0
                             this.description = ''
@@ -219,7 +219,7 @@ export default {
                             foodPrice: this.foodPrice,
                             foodDescription: this.description,
                             foodPic: this.newFoodPic,
-                            foodType: this.kidsfood === true ? 'Kiddie Food' : 'Adult Food'
+                            // foodType: this.kidsfood === true ? 'Kiddie Food' : 'Adult Food'
                           }
                           this.$firestoreApp.collection('Food').doc(this.foodID).set(foodBago)
                           this.$q.notify({
@@ -238,7 +238,7 @@ export default {
         },
         cancel(){
             this.foodNames = ''
-            this.kidsfood = false
+            // this.kidsfood = false
             this.selectCategory = ''
             this.foodPrice = 0
             this.description = ''
@@ -251,7 +251,7 @@ export default {
             this.selectedFood = task
             this.foodID = task['.key']
             this.foodNames = task.foodName
-            this.kidsfood = task.foodType
+            // this.kidsfood = task.foodType
             this.selectCategory = { label: task.category, value: task.category }
             this.foodPrice = task.foodPrice
             this.description = task.foodDescription
@@ -329,7 +329,7 @@ export default {
                             foodPrice: this.foodPrice,
                             foodDescription: this.description,
                             foodPic: this.newFoodPic,
-                            foodType: this.kidsfood === true ? 'Kiddie Food' : 'Adult Food'
+                            // foodType: this.kidsfood === true ? 'Kiddie Food' : 'Adult Food'
                         }
 
                             vm.$firestoreApp.collection('Food').add(food)
@@ -344,7 +344,7 @@ export default {
                                 this.selectCategory = ''
                                 this.foodPrice = ''
                                 this.description = ''
-                                this.kidsfood = false
+                                // this.kidsfood = false
                           })
                       }).onCancel(()=>{
                             console.log(this.selectCategory)
