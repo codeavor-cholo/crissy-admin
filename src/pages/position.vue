@@ -1,18 +1,35 @@
 <template>
     <q-page padding>
+        <div class="row justify-between q-pt-md">
+            <div class="q-pl-md">
+                <q-btn label="Add New Position" icon="add" color="orange-8" @click="addPositionDialog = true, isEdit = false">
+                    <q-tooltip>
+                        Add Position
+                    </q-tooltip>
+                </q-btn>    
+            </div>
+            <div class="q-pr-xl">    
+                <q-input dense v-model="filter" clearable type="text" label="Search Position" color="orange-6" class="bg-white" outlined icon="search">
+                    <template v-slot:prepend>
+                        <q-icon name="search" color="orange-6"/>
+                    </template>
+                </q-input>
+            </div>
+        </div>
+        <div class="q-pt-md">
         <q-table grid :data="Position" :columns="columns" :filter="filter" class="q-px-sm full-width align-center ">
                             <template v-slot:item="props">
                                 <div class="q-pa-xs col-xs-12 col-sm-6 col-md-3 col-lg-3 grid-style-transition q-ma-sm" :style="props.selected ? 'transform: scale(0.95);' : ''">
                                     <q-card class="my-card q-pa-sm"  style="border-radius:20px">
                                             <q-list>
-                                                <q-item class="text-h6">
-                                                    <q-item-section>
-                                                        <q-item-label> {{props.row.position}}</q-item-label>
+                                                <q-item>
+                                                    <q-item-section class="text-center">
+                                                        <q-item-label style="font-size:17px"><b>{{props.row.position}}</b></q-item-label>
                                                     </q-item-section>
                                                 </q-item>
                                             </q-list>
-                                            <q-separator  inset />
-                                            <q-card-actions align="center">
+                                            <q-separator inset />
+                                            <q-card-actions class="row justify-between">
                                                 <q-btn flat dense label="edit" color="green" icon="mdi-pencil" @click="getedit(props.row)">
                                                     <q-tooltip>
                                                         Edit
@@ -28,13 +45,7 @@
                                 </div>
                             </template>
                         </q-table>
-        <!--FLOATING BUTTON-->
-        <q-page-sticky position="top-left" :offset="[20, 10]">
-            <q-btn label="Add New Position" icon="add" color="orange-8" @click="addPositionDialog = true, isEdit = false" />
-                <q-tooltip>
-                    Add Position
-                </q-tooltip>
-        </q-page-sticky>
+        </div>
         <!--Modal For add Food-->
         <q-dialog v-model="addPositionDialog" persistent>
             <q-card style="min-width: 400px">
@@ -69,6 +80,7 @@ export default {
             addPositionDialog: false,
             editDialog: false,
             position: '',
+            filter: '',
             Position: [],
             filter: '',
             columns: [
