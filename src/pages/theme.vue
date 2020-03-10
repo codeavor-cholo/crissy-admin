@@ -1,14 +1,23 @@
 <template>
     <q-page padding="">
-        <template>
-                 <!-- <q-page-sticky position="top-left" :offset="[20, 10]"> -->
-                    <q-btn label="Add New Theme" icon="add" color="orange-8" @click="addThemeDialog = true, cancel()">
-                        <q-tooltip>
-                            Add Theme
-                        </q-tooltip>
-                    </q-btn>
-                <!-- </q-page-sticky> -->
-                    <div>
+    <template>
+        <div class="row justify-between q-pt-md">
+            <div class="q-pl-md">
+                <q-btn label="Add New Theme" icon="add" color="orange-8" @click="addThemeDialog = true, cancel()">
+                    <q-tooltip>
+                        Add Theme
+                    </q-tooltip>
+                </q-btn>
+            </div>
+            <div class="q-pr-xl">
+                <q-input dense v-model="filter" clearable type="text" label="Search Theme" color="orange-6" class="bg-white" outlined icon="search">
+                    <template v-slot:prepend>
+                        <q-icon name="search" color="orange-6"/>
+                    </template>
+                </q-input>
+            </div>               
+        </div>
+                    <div class="q-pt-md">
                         <q-table grid :data="Theme" :columns="columns" :pagination.sync="pagination" :filter="filter" class="q-px-sm full-width align-center ">
                             <template v-slot:item="props">
                                 
@@ -17,14 +26,14 @@
                                         <div>
                                             <q-img :src="props.row.themePic" :ratio="3/2" style="border-radius:20px 20px 0 0">
                                             </q-img>
-                                            <div>
-                                                <span class="q-pa-sm column items-center text-weight-light">Theme</span>
-                                                <span style="margin-top: -20px" class="q-pa-sm column items-center text-weight-bold">{{props.row.themeName}}</span>
-                                                <span style="margin-top: -20px" class="q-pa-sm column items-center text-weight-light">Description</span>
-                                                <span style="margin-top: -20px" class="q-pa-sm column items-center text-weight-bold">{{props.row.themeDescription}}</span>
+                                            <div class="column items-center justify-center q-pa-sm">
+                                                <span class="text-weight-light">Theme</span>
+                                                <span class="text-weight-bold">{{props.row.themeName}}</span>
+                                                <span class="text-weight-light">Description</span>
+                                                <span class="text-weight-bold">{{props.row.themeDescription}}</span>
                                             </div>
                                         <q-separator  inset />
-                                        <q-card-actions align="center" class=" q-pb-md">
+                                        <q-card-actions class="row justify-between q-pb-md">
                                             <q-btn flat label="EDIT" @click="getedit(props.row)" icon="edit" color="green"/>
                                             <q-btn flat label="DELETE" @click="deletedialog(props.row)" icon="delete"/>
                                         </q-card-actions>

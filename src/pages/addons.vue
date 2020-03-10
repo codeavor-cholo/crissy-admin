@@ -1,18 +1,36 @@
 <template>
     <q-page padding>
-        <q-table grid :data="Addons" :columns="columns" :filter="filter" class="q-px-sm full-width align-center q-pa-md" :pagination.sync="pagination">
+        <div class="row justify-between q-pt-md">
+            <div class="q-pl-md">
+                <q-btn label="Add New Addons" icon="add" color="orange-8" @click="addAddonsDialog = true, isEdit = false" >
+                    <q-tooltip>
+                        Add Addons
+                    </q-tooltip>
+                </q-btn>
+            </div>
+            <div class="q-pr-xl">    
+                <q-input dense v-model="filter" clearable type="text" label="Search Add-ons" color="orange-6" class="bg-white" outlined icon="search">
+                    <template v-slot:prepend>
+                        <q-icon name="search" color="orange-6"/>
+                    </template>
+                </q-input>
+            </div>
+        </div>
+        <div class="q-pt-md">
+        <q-table grid :data="Addons" :columns="columns" :filter="filter" class="q-px-sm full-width align-center" :pagination.sync="pagination">
                             <template v-slot:item="props">
                                 <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-4 grid-style-transition q-ma-sm" :style="props.selected ? 'transform: scale(0.95);' : ''">
                                     <q-card class="my-card q-pa-sm" style="border-radius:20px" >
                                             <q-list>
                                                 <q-item>
-                                                    <q-item-section>
-                                                        <q-item-label class="text-h6"> {{props.row.addons}} <b class="float-right text-orange">{{props.row.price}}php</b></q-item-label>
+                                                    <q-item-section align="center">
+                                                        <q-item-label style="font-size:17px"><b>{{props.row.addons}}</b></q-item-label>
+                                                        <q-item-label><b class="text-orange">{{props.row.price}}php</b></q-item-label>
                                                     </q-item-section>
                                                 </q-item>
                                             </q-list>
                                             <q-separator  inset />
-                                            <q-card-actions align="center">
+                                            <q-card-actions class="row justify-between q-px-lg">
                                                 <q-btn flat dense label="edit" class="text-green" icon="mdi-pencil" @click="getedit(props.row)">
                                                     <q-tooltip>
                                                         Edit
@@ -28,13 +46,7 @@
                                 </div>
                             </template>
                         </q-table>
-        <!--FLOATING BUTTON-->
-        <q-page-sticky position="top-left" :offset="[20, 10]">
-            <q-btn label="Add New Addons" icon="add" color="orange-8" @click="addAddonsDialog = true, isEdit = false" />
-                <q-tooltip>
-                    Add Addons
-                </q-tooltip>
-        </q-page-sticky>
+        </div>
         <!--Modal For add Food-->
         <q-dialog v-model="addAddonsDialog" persistent>
             <q-card style="min-width: 400px">

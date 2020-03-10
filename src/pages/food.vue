@@ -2,11 +2,22 @@
     <q-page padding="">
         <template>
                  <!-- <q-page-sticky position="top-left" :offset="[20, 10]"> -->
+            <div class="row justify-between q-pt-md">    
+                <div class="q-pl-md">    
                     <q-btn label="Add New Food" icon="add" color="orange-8" @click="addFoodDialog = true, cancel()">
                         <q-tooltip>
                             Add Food
                         </q-tooltip>
                     </q-btn>
+                </div>
+                <div class="q-pr-xl">
+                <q-input dense v-model="filter" clearable type="text" label="Search Food" color="orange-6" class="bg-white" outlined icon="search">
+                    <template v-slot:prepend>
+                        <q-icon name="search" color="orange-6"/>
+                    </template>
+                </q-input>
+                </div>
+            </div>
                 <!-- </q-page-sticky> -->
                     <div>
                         <q-table grid :data="Food" :columns="columns" :pagination.sync="pagination" :filter="filter" class="q-px-sm full-width align-center ">

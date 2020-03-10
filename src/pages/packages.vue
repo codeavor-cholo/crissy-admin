@@ -1,14 +1,23 @@
 <template>
     <q-page padding>
-        <template>  
-                <!-- <q-page-sticky position="top-right" :offset="[80, 50]">
-                    <q-btn label="Add New Package" icon="add" class="q-my-md q-ml-md" color="orange-8" @click="$router.push('/createpackage')" />
+        <template>
+            <div class="row justify-between q-pt-md">  
+                <div class="q-pl-md">
+                    <q-btn label="Add New Package" icon="add" color="orange-8" @click="$router.push('/createpackage')" >
                         <q-tooltip>
-                            Add Package
+                            Add New Package
                         </q-tooltip>
-                </q-page-sticky> -->
-                    <div class="q-mx-lg" >
-                        <q-btn label="Add New Package" icon="add" class="q-my-md q-ml-md align-right" color="orange-8" @click="$router.push('/createpackage')" />
+                    </q-btn>
+                </div>
+                <div class="q-pr-xl">
+                    <q-input dense v-model="filter" clearable type="text" label="Search Package" color="orange-6" class="bg-white" outlined icon="search">
+                        <template v-slot:prepend>
+                            <q-icon name="search" color="orange-6"/>
+                        </template>
+                    </q-input>
+                </div>
+            </div>
+                    <div class="q-mx-lg q-pt-md" >
                         <q-table grid :data="Packages" :columns="columns" :filter="filter" class="q-px-sm full-width align-center ">
                             <template v-slot:item="props">
                                 <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-4 grid-style-transition " :style="props.selected ? 'transform: scale(0.95);' : ''">
