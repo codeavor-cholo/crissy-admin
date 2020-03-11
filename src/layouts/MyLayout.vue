@@ -169,6 +169,7 @@
             </q-item-section>
           </q-item>
           </q-expansion-item> -->
+
           <div class="q-mt-md">
             <div class="flex flex-center q-gutter-xs">
               <a class="GNL__drawer-footer-link" href="javascript:void(0)" aria-label="Privacy">Privacy</a>
@@ -208,6 +209,7 @@ export default {
         { icon: 'mdi-walk', text: 'Walk-In Reservation' },
         { icon: 'dashboard', text: 'Dashboard' },
         { icon: 'mdi-calendar', text: 'Reservation' },
+        { icon: 'update', text: 'Status' },
         { icon: 'search', text: 'Saved searches' }
       ],
       links2: [
@@ -244,6 +246,8 @@ export default {
                 this.$router.push('/dashboard')
             } else if(party[0].text == 'Reservation') {
                 this.$router.push('/reservation')
+            } else if(party[0].text == 'Status') {
+                this.$router.push('/status')  
             } else {
                 this.$router.push('/Error404')
             }
