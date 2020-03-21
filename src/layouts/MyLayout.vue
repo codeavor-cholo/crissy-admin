@@ -210,7 +210,9 @@ export default {
         { icon: 'dashboard', text: 'Dashboard' },
         { icon: 'mdi-calendar', text: 'Reservation' },
         { icon: 'update', text: 'Status' },
-        { icon: 'search', text: 'Saved searches' }
+        { icon: 'search', text: 'Saved searches' },
+        { icon: 'supervised_user_circle', text: 'User Management' },
+        { icon: 'event_note', text: 'Event Staff Scheduling' },
       ],
       links2: [
         { icon: 'mdi-briefcase-plus', text: 'Position' },
@@ -248,6 +250,10 @@ export default {
                 this.$router.push('/reservation')
             } else if(party[0].text == 'Status') {
                 this.$router.push('/status')  
+            } else if(party[0].text == 'User Management') {
+                this.$router.push('/users')  
+            } else if(party[0].text == 'Event Staff Scheduling') {
+                this.$router.push('/staffscheduling')  
             } else {
                 this.$router.push('/Error404')
             }
