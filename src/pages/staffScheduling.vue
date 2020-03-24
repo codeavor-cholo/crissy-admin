@@ -137,7 +137,7 @@
 </template>
 <script>
 import { date } from 'quasar'
-import { QCalendar } from '@quasar/quasar-ui-qcalendar'
+import { QCalendar } from '@quasar/quasar-ui-qcalendar'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 
 function luminosity (color) {
   if (typeof color !== 'string' && (!color || color.r === void 0)) {
@@ -434,7 +434,11 @@ export default {
                 let startBase
                 let startArr = start[1].split(" ")
                 if(startArr[1] == 'PM'){
-                    startBase = 12 + parseInt(start[0])
+                    if(parseInt(start[0]) == 12){
+                        startBase = start[0]
+                    } else {
+                        startBase = 12 + parseInt(start[0])
+                    }
                 } else {
                     startBase = parseInt(start[0])
                 }
@@ -444,8 +448,12 @@ export default {
                 let endArr = end[1].split(" ")
                 // console.log(endArr,'endArr')
                 if(endArr[1] == 'PM'){
-                    endBase = 12 + parseInt(end[0])
-                    console.log(endBase)
+                    if(parseInt(end[0]) == 12){
+                        endBase = parseInt(end[0])
+                    } else {
+                        endBase = 12 + parseInt(end[0])
+                    }
+                   
                 } else {
                     endBase = parseInt(end[0]) 
                 } 
@@ -499,7 +507,12 @@ export default {
                 let endArr = rev[1].split(" ")
                 // console.log(endArr,'endArr')
                 if(endArr[1] == 'PM'){
-                    endBase = 12 + parseInt(rev[0])
+                    if(parseInt(rev[0]) == 12){
+                        endBase = parseInt(rev[0])
+                    } else {
+                        endBase = 12 + parseInt(rev[0])
+                    }
+                    
                 } else {
                     endBase = parseInt(rev[0]) 
                 } 
@@ -603,7 +616,12 @@ export default {
             let startBase
             let startArr = start[1].split(" ")
             if(startArr[1] == 'PM'){
-                startBase = 12 + parseInt(start[0])
+                if(parseInt(start[0]) == 12){
+                    startBase = start[0]
+                } else {
+                    startBase = 12 + parseInt(start[0])
+                }
+                
             } else {
                 startBase = parseInt(start[0])
             }    
