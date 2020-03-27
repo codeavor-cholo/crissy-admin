@@ -100,7 +100,7 @@
                 <q-avatar size="26px">
                   <img src="https://cdn.quasar.dev/img/boy-avatar.png">
                 </q-avatar>
-                <span class="q-ml-md">Admin</span>
+                <span class="q-ml-md">{{userEmail}}</span>
               </template>
                   <q-list>
               <q-item clickable v-close-popup>
@@ -230,8 +230,26 @@ export default {
         { icon: 'mdi-room-service', text: 'Services' },
         { icon: 'mdi-database-plus', text: 'Add-Ons' },
         // { icon: 'mdi-candycane', text: 'Freebies' }
-      ]
+      ],
+      userEmail: ''
     }
+  },
+  created() {
+    let self = this
+    this.$firebase.auth().onAuthStateChanged(function(user) {
+        
+        if (user) {
+        let gg = {...user}
+        console.log('createdUser',user)
+        console.log('createdUser',user.uid)
+        let username = gg.email.toString().split('@')
+        self.userEmail = username[0]
+        self.accountLoggedIn = gg
+
+        } else {
+            self.$router.push('/')
+        }
+    })
   },
   computed:{
   

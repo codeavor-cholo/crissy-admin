@@ -539,14 +539,22 @@ export default {
             let sBase
             let startArrLatest = startLatest[1].split(" ")
             if(startArrLatest[1] == 'PM'){
-                sBase = 12 + startLatest[0]
+                if(parseInt(startLatest[0]) == 12){
+                    sBase = parseInt(startLatest[0])
+                } else {
+                    sBase = 12 + parseInt(startLatest[0])
+                }
             } else {
                 sBase = startLatest[0] 
             }            
             let eBase
             let endArrLatest = endLatest[1].split(" ")
             if(endArrLatest[1] == 'PM'){
-                eBase = 12 + endLatest[0]
+                if(parseInt(endLatest[0]) == 12){
+                    eBase = parseInt(endLatest[0])
+                } else {
+                    eBase = 12 + endLatest[0]
+                }
             } else {
                 eBase = endLatest[0] 
             }           
@@ -565,7 +573,12 @@ export default {
                     let startBase
                     let startArr = start[1].split(" ")
                     if(startArr[1] == 'PM'){
-                        startBase = 12 + start[0]
+                        if(parseInt(start[0]) == 12){
+                            startBase = parseInt(start[0])
+                        } else {
+                            startBase = 12 + parseInt(start[0])
+                        }
+                        
                     } else {
                         startBase = start[0] 
                     }
@@ -575,9 +588,14 @@ export default {
                     let endBase
                     let endArr = end[1].split(" ")
                     if(endArr[1] == 'PM'){
-                        endBase = 12 + end[0]
+                        if(parseInt(end[0]) == 12){
+                            endBase = parseInt(start[0])
+                        } else {
+                            endBase = 12 + parseInt(end[0])
+                        }
+                        
                     } else {
-                        endBase = end[0] 
+                        endBase = parseInt(end[0])
                     }
 
                     dateFrom = date.addToDate(dateFrom, { hours: startBase, minutes: parseInt(start[1])})
