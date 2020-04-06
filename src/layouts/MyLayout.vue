@@ -213,6 +213,7 @@ export default {
         { icon: 'search', text: 'Saved searches' },
         { icon: 'supervised_user_circle', text: 'User Management' },
         { icon: 'event_note', text: 'Event Staff Scheduling' },
+        { icon: 'mdi-calendar', text: 'Reserve' },
       ],
       links2: [
         { icon: 'mdi-briefcase-plus', text: 'Position' },
@@ -272,9 +273,11 @@ export default {
                 this.$router.push('/users')  
             } else if(party[0].text == 'Event Staff Scheduling') {
                 this.$router.push('/staffscheduling')  
+            } else if(party[0].text == 'Reserve') {
+                this.$router.push('/mobreserve')
             } else {
                 this.$router.push('/Error404')
-            }
+            } 
         },
     filterDashboardII(link){
             let party = this.$lodash.filter(this.links2, a=>{
