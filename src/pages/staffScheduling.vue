@@ -394,7 +394,7 @@ export default {
                 console.log('reservations',this.selectedReservations)
                 let map = this.selectedReservations.map(a=>{
                     let data = {...a}
-                    data.clientEventType = data.clientSelectPackage.event !== null ? data.clientSelectPackage.event : ''
+                    data.clientEventType = data.clientSelectPackage.event !== undefined ? data.clientSelectPackage.event : ''
                     return data
                 })
                 console.log('returnStaffSchedules',map)
@@ -655,7 +655,7 @@ export default {
                 clientStartTime: reservations.clientStartTime,
                 clientEndTime: reservations.clientEndTime,
                 clientEvent: reservations.clientEvent,
-                clientEventType: reservations.clientSelectPackage.event !== null ? reservations.clientSelectPackage.event : '',
+                clientEventType: reservations.clientSelectPackage.event !== undefined ? reservations.clientSelectPackage.event : '',
                 clientPlace: reservations.clientPlace,
                 clientCity: reservations.clientCity,
                 reservationKey: reservations['.key'],

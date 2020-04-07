@@ -26,7 +26,7 @@
                         <div>
                             <q-btn dense class="full-width q-mb-md" color="orange-7" label="view Reservation Details" outline=""/>
                             <q-btn class="full-width" color="orange-7" @click="updateStatus(sched)" v-if="returnSelectedEventStatus(sched).length < StatusArr.length">Update Status <div class="full-width text-caption text-capitalize">Next: {{returnNextStatus(sched)}}</div></q-btn>
-                            <q-btn class="full-width" color="green" v-else disable=""><q-icon name="check" class="q-mr-md" /> Event is Ready !</q-btn>
+                            <q-btn class="full-width" color="green" v-else disable=""><q-icon name="check" class="q-mr-md" /> Event Venue is Ready !</q-btn>
                         </div>
                     </q-item-section>           
             </q-item>
@@ -166,7 +166,7 @@ export default {
 
                 a.dateBasis = create
 
-                return a.staffKey == this.accountLoggedIn.uid && dates !== today
+                return a.staffKey == this.accountLoggedIn.uid && dates >= today
               })
               console.log(filter,'filter')
 
