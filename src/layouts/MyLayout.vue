@@ -227,7 +227,6 @@
                 <q-avatar size="26px">
                   <img src="https://cdn.quasar.dev/img/boy-avatar.png">
                 </q-avatar>
-                <span class="q-ml-md">Account</span>
               </template>
                   <q-list>
                     <q-item>
@@ -318,10 +317,16 @@
         </q-list>
       </q-scroll-area>
     </q-drawer>
-
+    <div class="desktop-only">
     <q-page-container>
       <router-view />
     </q-page-container>
+    </div>
+    <div class="mobile-only">
+    <q-page-container>
+      <router-view />
+    </q-page-container>
+    </div>
   </q-layout>
 </template>
 
