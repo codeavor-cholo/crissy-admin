@@ -69,7 +69,6 @@
                 v-for="col in props.cols"
                 :key="col.name"
                 :props="props"
-                class="text-italic text-purple"
                 v-show="col.name !== 'basis'"
             >
                 {{ col.label }}
@@ -147,7 +146,9 @@ export default {
                 } else if (this.type == 'month'){
                     let map2 = this.$lodash.map(map,a=>{
                         let date = this.$moment(a.date).format('LL')
+                        let orderBase = this.$moment(a.date).format('YYYYM')
                         let string = date.split(' ')
+                        a.basis = orderBase
                         a.month = string[0] + ' ' + string[2]
                         return a
                     })
@@ -155,24 +156,6 @@ export default {
 
                     let group2 = this.$lodash.groupBy(map2,'month')
                     console.log(group2,'group2')
-
-                    // let map3 = this.$lodash.map(group2,function(value,key){
-                    //     // console.log(data,'data')
-                    //     return {
-                    //         date: key,
-                    //         dataArray: value
-                    //     }
-                    // })
-
-                    // for(var y = 0; y < map3.length; y++){
-                    //     let sum = this.$lodash.sumBy(map3[y].dataArray, a=>{
-                    //         return a.totalSales
-                    //     })
-                    //     map3[y].totalSales = sum
-                    // }
-
-
-                    // console.log(map3,'map3')
 
                     reports = this.returnSales(group2)
                 } else if (this.type == 'year'){
@@ -228,8 +211,10 @@ export default {
         changeLabel(type){
                 if(type == 'day'){
                     this.columns[0].label = 'Date'
+                    this.pagination.sortBy = 'date'
                 } else if (type == 'month'){
                     this.columns[0].label = 'Month'
+                    this.pagination.sortBy = 'basis'
                 } else {
                     this.columns[0].label = 'Year'
                 }            
@@ -248,8 +233,9 @@ export default {
                     return a.totalSales
                 })
                 map3[y].totalSales = sum
+                map3[y].basis = map3[y].dataArray[0].basis
             }
-
+            console.log(map3,'map3')
             return map3
         }
 

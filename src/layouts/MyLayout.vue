@@ -214,7 +214,8 @@ export default {
         { icon: 'supervised_user_circle', text: 'User Management' },
         { icon: 'event_note', text: 'Event Staff Scheduling' },
         { icon: 'assessment', text: 'Sales Reports' },
-        { icon: 'bar_chart', text: 'Most Popular Choices' }
+        { icon: 'bar_chart', text: 'Most Popular Choices' },
+        { icon: 'local_atm', text: 'Payment Reports' }
       ],
       links2: [
         { icon: 'mdi-briefcase-plus', text: 'Position' },
@@ -277,7 +278,9 @@ export default {
             } else if(party[0].text == 'Sales Reports') {
                 this.$router.push('/reports')    
             } else if(party[0].text == 'Most Popular Choices') {
-                this.$router.push('/bestReports')    
+                this.$router.push('/bestReports') 
+            } else if(party[0].text == 'Payment Reports') {
+                this.$router.push('/paymentReports')                   
             } else {
                 this.$router.push('/Error404')
             }

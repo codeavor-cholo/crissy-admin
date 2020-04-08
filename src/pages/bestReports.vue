@@ -52,6 +52,19 @@
         </div>
         <div class="q-pt-md">
         <q-table hide-bottom=""  flat :data="returnPopular" :binary-state-sort="true" :columns="columns" :pagination.sync="pagination" :filter="filter" class="q-px-sm full-width align-center ">
+            <template v-slot:body="props">
+                <q-tr :props="props">
+                <q-td key="rank" :props="props" class="text-overline text-grey-10">
+                    {{props.row.rank}}
+                </q-td>
+                <q-td key="name" :props="props" class="text-overline text-grey-10">
+                   {{props.row.name}}
+                </q-td>
+                <q-td key="count" :props="props" class="text-overline text-grey-10">
+                   {{props.row.count}}
+                </q-td>
+                </q-tr>
+            </template>
         </q-table>
         <!-- <q-card class="my-card q-mt-md" flat>
             <q-card-section class="row justify-between">
@@ -80,8 +93,8 @@ export default {
             visibleColumns: [ 'date', 'totalSales' ],
             columns: [
                     { name: 'rank', required: true, label: 'Rank', align: 'left', field: 'rank', sortable: true },
-                    { name: 'name', required: true, label: 'Name', align: 'left', field: 'name', sortable: true},
-                    { name: 'total count', required: true, label: 'Total Count', align: 'right', field: 'total count', sortable: true },
+                    { name: 'name', required: true, label: 'Package Name', align: 'left', field: 'name', sortable: true},
+                    { name: 'count', required: true, label: 'Total Count', align: 'right', field: 'count', sortable: true },
             ],
             pagination: {
                 sortBy: 'rank',
@@ -108,7 +121,54 @@ export default {
         },
         returnPopular(){
             try {
-                return []
+                let reports = []
+                if(this.type == 'packages'){
+
+                    let notCustom = []
+                    let map = this.Reservation.map(b=>{
+                        let base = b
+                        if(base.clientSelectPackage !== 'CUSTOMIZE'){
+                            notCustom.push({name: base.clientSelectPackage.name})
+                        }
+                    })
+                    console.log(notCustom,'notCustom')
+                    let group = this.$lodash.groupBy(notCustom,'name')
+                    console.log(group,'group')
+                    let mapping = this.$lodash.map(group,function(value,key){
+                        return {
+                            name: key,
+                            array: value,
+                            count: value.length
+                        }
+                    })
+                    console.log(mapping,'mapping')
+                    let order = this.$lodash.orderBy(mapping,'count','desc')
+                    console.log(order,'order')
+                    reports = this.returnRanking(order)
+                } else {
+                    let choices = []
+                    let loop = this.Reservation.forEach(a=>{
+                        for(var x = 0; x < a.clientFoodChoice.length; x++){
+                            choices.push(a.clientFoodChoice[x])
+                        }
+                    })
+                    console.log(choices,'choices')
+                    let group2 = this.$lodash.groupBy(choices,'foodName')
+                    console.log(group2,'group2')
+                    let mapping2 = this.$lodash.map(group2,function(value,key){
+                        return {
+                            name: key,
+                            array: value,
+                            count: value.length
+                        }
+                    })
+                    console.log(mapping2,'mapping2')
+                    let order2 = this.$lodash.orderBy(mapping2,'count','desc')
+                    console.log(order2,'order2')
+                    reports = this.returnRanking(order2)
+                }
+
+                return reports
             } catch (error) {
                 return []
             }
@@ -119,12 +179,12 @@ export default {
             return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
         },
         changeLabel(type){
-                if(type == 'day'){
-                    this.columns[0].label = 'Date'
-                } else if (type == 'month'){
-                    this.columns[0].label = 'Month'
+                if(type == 'packages'){
+                    this.columns[1].label = 'Package Name'
+                } else if (type == 'foods'){
+                    this.columns[1].label = 'Food Name'
                 } else {
-                    this.columns[0].label = 'Year'
+                    this.columns[1].label = 'Name'
                 }            
         },
         returnSales(group){
@@ -144,6 +204,12 @@ export default {
             }
 
             return map3
+        },
+        returnRanking(order){
+            for(var y = 0; y < order.length; y++){
+                order[y].rank = y + 1
+            }  
+            return order          
         }
 
     }
