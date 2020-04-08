@@ -1,9 +1,9 @@
 <template>
   <q-layout view="hHh lpR fFf" class="bg-grey-4">
 
-<!-- START OF DESKTOP HEADER -->
-    <div class="desktop-only">
     <q-header elevated class="bg-grey-8 text-white" style="background-color: #fc000d" height-hint="64">
+<!-- START OF DESKTOP HEADER -->
+      <div class="desktop-only">
       <q-toolbar class="GNL__toolbar">
         <q-btn
           flat
@@ -121,14 +121,12 @@
           </q-btn-dropdown>
         </div>
       </q-toolbar>
-    </q-header>
-    </div>
+      </div>
 <!-- END OF DESKTOP HEADER -->
 
-<!-- START OF MOBILE HEADER -->
-    <div class="mobile-only">
-    <q-header elevated class="bg-grey-8 text-white" style="background-color: #fc000d" height-hint="64">
-      <q-toolbar class="GNL__toolbar">
+<!-- START OF MOBILE ONLY HEADER -->
+      <div class="mobile-only">
+        <q-toolbar class="GNL__toolbar">
         <q-btn
           flat
           dense
@@ -251,9 +249,9 @@
           </q-btn-dropdown>
         </div>
       </q-toolbar>
+      </div>
+<!-- END OF MOBILE ONLY HEADER -->
     </q-header>
-    </div>
-<!-- END OF MOBILE HEADER -->
 
     <q-drawer
       v-model="leftDrawerOpen"
@@ -317,6 +315,7 @@
         </q-list>
       </q-scroll-area>
     </q-drawer>
+    
     <div class="desktop-only">
     <q-page-container>
       <router-view />
