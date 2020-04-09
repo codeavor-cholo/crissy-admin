@@ -73,7 +73,7 @@
         </q-table>
         <q-card class="my-card q-mt-md" flat>
             <q-card-section class="row justify-between">
-                <div class="text-h6">Total Revenue</div>
+                <div class="text-h6">Total Expected Revenue</div>
                 <div class="text-h6 text-deep-orange-8"><b>₱ {{ formatNumber(returnToPay) }}.00</b></div>
             </q-card-section>
             
@@ -118,7 +118,7 @@ export default {
             Reservation: [],
             filter: '',
             columns: [
-                    { name: 'id', required: true, label: 'Transaction ID', align: 'left', field: 'id', sortable: true },
+                    { name: 'id', required: true, label: 'Reservation ID', align: 'left', field: 'id', sortable: true },
                     { name: 'clientReserveDate', required: true, label: 'Client Reserved Date', align: 'left', field: 'clientReserveDate', sortable: true },
                     { name: 'clientName', required: true, label: 'Client Name', align: 'left', field: 'clientName', sortable: true },
                     { name: 'toPayAmount', required: true, label: 'To Pay', align: 'right', field: 'toPayAmount', sortable: true },
