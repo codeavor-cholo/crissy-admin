@@ -25,8 +25,10 @@ const routes = [
       { path: '/status', meta: {requiredAuth: true}, name: 'status', component: () => import('pages/status.vue') },
       { path: '/users', meta: {requiredAuth: true}, name: 'users', component: () => import('pages/users.vue') },
       { path: '/staffscheduling', meta: {requiredAuth: true}, name: 'staffscheduling', component: () => import('pages/staffScheduling.vue') },
+      { path: '/reports', meta: {requiredAuth: true}, name: 'reports', component: () => import('pages/reports.vue') },
+      { path: '/bestReports', meta: {requiredAuth: true}, name: 'bestReports', component: () => import('pages/bestReports.vue') },
+      { path: '/paymentReports', meta: {requiredAuth: true}, name: 'paymentReports', component: () => import('pages/paymentReports.vue') },
       { path: '/mobreserve', meta: {requiredAuth: true}, name: 'mobreserve', component: () => import('pages/mobreserve.vue') },
-
     ]
   },
   { path: '/', component: () => import('pages/login.vue') },

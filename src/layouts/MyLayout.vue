@@ -353,6 +353,9 @@ export default {
         { icon: 'search', text: 'Saved searches' },
         { icon: 'supervised_user_circle', text: 'User Management' },
         { icon: 'event_note', text: 'Event Staff Scheduling' },
+        { icon: 'assessment', text: 'Sales Reports' },
+        { icon: 'bar_chart', text: 'Most Popular Choices' },
+        { icon: 'local_atm', text: 'Payment Reports' },
         { icon: 'mdi-calendar', text: 'Reserve' },
       ],
       links2: [
@@ -412,7 +415,14 @@ export default {
             } else if(party[0].text == 'User Management') {
                 this.$router.push('/users')  
             } else if(party[0].text == 'Event Staff Scheduling') {
-                this.$router.push('/staffscheduling')  
+
+                this.$router.push('/staffscheduling')
+            } else if(party[0].text == 'Sales Reports') {
+                this.$router.push('/reports')    
+            } else if(party[0].text == 'Most Popular Choices') {
+                this.$router.push('/bestReports') 
+            } else if(party[0].text == 'Payment Reports') {
+                this.$router.push('/paymentReports')                   
             } else if(party[0].text == 'Reserve') {
                 this.$router.push('/mobreserve')
             } else {
