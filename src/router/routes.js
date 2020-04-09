@@ -25,6 +25,7 @@ const routes = [
       { path: '/status', meta: {requiredAuth: true}, name: 'status', component: () => import('pages/status.vue') },
       { path: '/users', meta: {requiredAuth: true}, name: 'users', component: () => import('pages/users.vue') },
       { path: '/staffscheduling', meta: {requiredAuth: true}, name: 'staffscheduling', component: () => import('pages/staffScheduling.vue') },
+      { path: '/mobreserve', meta: {requiredAuth: true}, name: 'mobreserve', component: () => import('pages/mobreserve.vue') },
 
     ]
   },

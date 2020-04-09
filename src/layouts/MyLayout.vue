@@ -1,6 +1,9 @@
 <template>
   <q-layout view="hHh lpR fFf" class="bg-grey-4">
+
     <q-header elevated class="bg-grey-8 text-white" style="background-color: #fc000d" height-hint="64">
+<!-- START OF DESKTOP HEADER -->
+      <div class="desktop-only">
       <q-toolbar class="GNL__toolbar">
         <q-btn
           flat
@@ -118,6 +121,136 @@
           </q-btn-dropdown>
         </div>
       </q-toolbar>
+      </div>
+<!-- END OF DESKTOP HEADER -->
+
+<!-- START OF MOBILE ONLY HEADER -->
+      <div class="mobile-only">
+        <q-toolbar class="GNL__toolbar">
+        <q-btn
+          flat
+          dense
+          round
+          @click="leftDrawerOpen = !leftDrawerOpen"
+          aria-label="Menu"
+          icon="menu"
+          class="q-mr-sm"
+        />
+        <q-img
+          src="statics/logo.png"
+          :ratio="1"
+          style="width:3.5em;"
+          class="q-ml-sm"
+        />
+        <q-toolbar-title v-if="$q.screen.gt.xs" shrink class="row items-center no-wrap">
+          <span>Crissy's Meal Magic Catering Services</span>
+        </q-toolbar-title>
+
+        <q-space />
+
+        <!-- <q-input class="GNL__toolbar-input text-white" outlined dense v-model="search" color="white" placeholder="Search for topics, locations & sources">
+          <template v-slot:prepend>
+            <q-icon v-if="search === ''" color="white" name="search" />
+            <q-icon v-else name="clear" color="white" class="cursor-pointer" @click="search = ''" />
+          </template>
+          <template v-slot:append>
+            <q-btn
+              flat
+              dense
+              round
+              aria-label="Menu"
+              icon="arrow_drop_down"
+            >
+              <q-menu anchor="bottom right" self="top right">
+                <div class="q-pa-md" style="width: 400px">
+                  <div class="text-body2 text-grey q-mb-md">
+                    Narrow your search results
+                  </div>
+
+                  <div class="row items-center">
+                    <div class="col-3 text-subtitle2 text-grey">
+                      Exact phrase
+                    </div>
+                    <div class="col-9 q-pl-md">
+                      <q-input dense v-model="exactPhrase" />
+                    </div>
+
+                    <div class="col-3 text-subtitle2 text-grey">
+                      Has words
+                    </div>
+                    <div class="col-9 q-pl-md">
+                      <q-input dense v-model="hasWords" />
+                    </div>
+
+                    <div class="col-3 text-subtitle2 text-grey">
+                      Exclude words
+                    </div>
+                    <div class="col-9 q-pl-md">
+                      <q-input dense v-model="excludeWords" />
+                    </div>
+
+                    <div class="col-3 text-subtitle2 text-grey">
+                      Website
+                    </div>
+                    <div class="col-9 q-pl-md">
+                      <q-input dense v-model="byWebsite" />
+                    </div>
+
+                    <div class="col-12 q-pt-lg row justify-end">
+                      <q-btn flat dense no-caps color="grey-7" size="md" style="min-width: 68px;" label="Search" v-close-popup />
+                      <q-btn flat dense no-caps color="grey-7" size="md" style="min-width: 68px;" @click="onClear" label="Clear" v-close-popup />
+                    </div>
+                  </div>
+                </div>
+              </q-menu>
+            </q-btn>
+          </template>
+        </q-input> -->
+
+        <q-space />
+
+        <div class="q-gutter-sm row items-center no-wrap">
+          <q-btn v-if="$q.screen.gt.sm" round dense flat color="text-grey-7" icon="apps">
+            <q-tooltip>Google Apps</q-tooltip>
+          </q-btn>
+          <q-btn round dense flat color="white" icon="notifications">
+            <q-badge color="orange-8" text-color="white" floating>
+              2
+            </q-badge>
+            <q-tooltip>Notifications</q-tooltip>
+          </q-btn>
+          
+          <q-btn-dropdown round flat>
+              <template v-slot:label>
+                <q-avatar size="26px">
+                  <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+                </q-avatar>
+              </template>
+                  <q-list>
+                    <q-item>
+                      <q-item-section>
+                        <q-item-label><b>CURRENT USER:</b></q-item-label>
+                        <q-item-label class="text-orange-9 text-center">{{userEmail}}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                    <q-separator />      
+                    <q-item clickable v-close-popup>
+                      <q-item-section>
+                        <q-item-label>Account Settings</q-item-label>
+                      </q-item-section>
+                    </q-item>
+
+                    <q-item clickable v-close-popup @click="logout">
+                      <q-item-section>
+                        <q-item-label>Logout</q-item-label>
+                      </q-item-section>
+                    </q-item>
+            </q-list>
+          </q-btn-dropdown>
+        </div>
+      </q-toolbar>
+      </div>
+<!-- END OF MOBILE ONLY HEADER -->
     </q-header>
 
     <q-drawer
@@ -182,10 +315,17 @@
         </q-list>
       </q-scroll-area>
     </q-drawer>
-
+    
+    <div class="desktop-only">
     <q-page-container>
       <router-view />
     </q-page-container>
+    </div>
+    <div class="mobile-only">
+    <q-page-container>
+      <router-view />
+    </q-page-container>
+    </div>
   </q-layout>
 </template>
 
@@ -213,6 +353,7 @@ export default {
         { icon: 'search', text: 'Saved searches' },
         { icon: 'supervised_user_circle', text: 'User Management' },
         { icon: 'event_note', text: 'Event Staff Scheduling' },
+        { icon: 'mdi-calendar', text: 'Reserve' },
       ],
       links2: [
         { icon: 'mdi-briefcase-plus', text: 'Position' },
@@ -272,9 +413,11 @@ export default {
                 this.$router.push('/users')  
             } else if(party[0].text == 'Event Staff Scheduling') {
                 this.$router.push('/staffscheduling')  
+            } else if(party[0].text == 'Reserve') {
+                this.$router.push('/mobreserve')
             } else {
                 this.$router.push('/Error404')
-            }
+            } 
         },
     filterDashboardII(link){
             let party = this.$lodash.filter(this.links2, a=>{
