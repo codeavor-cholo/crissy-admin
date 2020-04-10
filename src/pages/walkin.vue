@@ -30,7 +30,7 @@
                               Select New Date
                             </q-tooltip>
                             <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                              <q-date v-model="date" event-color="orange-8" :events="eventsReserve" mask="YYYY-MM-DD" @input="() => $refs.qDateProxy.hide()" />
+                              <q-date v-model="date" event-color="orange-8" :events="eventsReserve" mask="YYYY-MM-DD" @input="() => $refs.qDateProxy.hide()" :options="date => dateToday(date)"/>
                             </q-popup-proxy>
                           </q-icon>
                         </template>
