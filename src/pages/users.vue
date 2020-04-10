@@ -104,7 +104,7 @@ export default {
             .then(Position => {
             console.log(Position, 'Position')
             }),
-        this.$binding('DashboardUsers', this.$firestoreApp.collection('DashboardUsers'))
+        this.$binding('DashboardUsers', this.$firestoreApp.collection('DashboardUsers').where('position','>=','Secretary').where('position','<=','Staff'))
             .then(DashboardUsers => {
             console.log(DashboardUsers, 'DashboardUsers')
             })
@@ -147,12 +147,13 @@ export default {
         },
         positionOpt(){
             try {
-                return this.Position.map(a=>{
-                    return {
-                        label: a.position,
-                        value: a.position
-                    }
+                let map = this.Position.map(a=>{
+                        return {
+                            label: a.position,
+                            value: a.position
+                        }
                 })
+                return map.filter(b=>{return b.value !== 'Admin'})
             } catch (error) {
                 return []
             }
