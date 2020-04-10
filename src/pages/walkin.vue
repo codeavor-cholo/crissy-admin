@@ -791,6 +791,27 @@ export default {
             })
   },
   computed: {
+      returnSelectedPackage(){
+        try {
+          return this.selectedPackage[0]
+        } catch (error) {
+          return []
+        }
+      },
+      returnPaxFixed(){
+        try {
+          let text
+          let selected = this.returnSelectedPackage
+          if(selected.withKid == true){
+            text = selected.adultPax+ 'adults & ' +selected.kidPax+ ' kids'
+          } else {
+            text = selected.adultPax
+          }
+          return text
+        } catch (error) {
+          return []
+        }
+      },
       returnTotalPriceAfterFoodAddOns(){
         try {
           return (parseInt(this.returnTotalPerPaxAddFood)*parseInt(this.returnTotalNumberPax))
@@ -1274,32 +1295,34 @@ export default {
     },
     reservenowCard(){
         let reserveDetails = {
-            clientReserveDate: this.date,
-            clientFName: this.fname,
-            clientLName: this.lname,
-            clientPlace: this.place,
-            clientCity: this.selectCity,
-            clientEvent: this.eventName,
-            clientEventType: this.selectEvent,
-            clientMotif: this.selectMotif,
-            clientPax: this.pax,
-            clientEmail: this.email,
-            clientStartTime: this.formatTimeInput(this.starttime),
-            clientEndTime: this.formatTimeInput(this.endtime),
-            clientSelectTheme: this.choiceOfTheme,
-            clientSelectPackage: this.tab === 'CUSTOMIZE' ? 'CUSTOMIZE' : this.selectedPackage[0],
-            clientPackageType: this.tab,
-            clientFoodChoice: this.choiceOfFood,
-            clientAdditionalFood: this.choiceOfFoodAdd,
-            clientServices: this.mergePricingServices,
-            clientAddons: this.mergePricingAddons,
-            clientTotalPayment: this.totalpayment,
-            clientPaidAmount: this.enterAmount,
-            clientPayDetails: this.paydetails,
-            clientTokenID: this.token.id,
-            clientPaymentType: 'CARD',
-            clientReserveType: 'WALK-IN',
-            clientDateofReserve: date.formatDate(new Date(), 'YYYY-MM-DD'),
+                clientSelectTheme: this.choiceOfTheme,
+                clientPaxDetails: this.tab === 'FIXED' ? this.returnPaxFixed : 'NONE',
+                clientAdditionalFood: this.choiceOfFoodAdd,
+                clientUID: 'WALK-IN',
+                clientReserveDate: this.date,
+                clientFName: this.fname,
+                clientLName: this.lname,
+                clientPlace: this.place,
+                clientCity: this.selectCity,
+                clientEvent: this.eventName,
+                clientEventType: this.selectEvent,
+                clientMotif: this.selectMotif,
+                clientPax: this.pax,
+                clientEmail: this.email,
+                clientStartTime: this.formatTimeInput(this.starttime),
+                clientEndTime: this.formatTimeInput(this.endtime),
+                clientSelectPackage: this.tab === 'CUSTOMIZE' ? 'CUSTOMIZE' : this.selectedPackage[0],
+                clientPackageType: this.tab,
+                clientFoodChoice: this.choiceOfFood,
+                clientServices: this.mergePricingServices,
+                clientAddons: this.mergePricingAddons,
+                clientTotalPayment: this.totalpayment,
+                clientPaidAmount: this.enterAmount,
+                clientPayDetails: this.paydetails,
+                clientTokenID: this.token.id,
+                clientPaymentType: 'CARD',
+                clientReserveType: 'WALK-IN',
+                clientDateofReserve: date.formatDate(new Date(), 'YYYY-MM-DD'),
             }
             this.$firestoreApp.collection('Reservation').add(reserveDetails)
             .then((ref) =>{
@@ -1309,9 +1332,13 @@ export default {
                   clientPayDetails: this.paydetails,
                   clientTokenID: this.token.id,
                   clientPaymentType: 'CARD',
+                  clientUID: 'WALK-IN',
+                  transactionType: 'WALK-IN',
+                  clientEmail: this.email,
                   clientPaymentDate: date.formatDate(new Date(), 'YYYY-MM-DD')
               }
-                  this.$firestoreApp.collection('Payments').add(paymentDetails)
+              console.log(paymentDetails, 'detailspayment')
+              this.$firestoreApp.collection('Payments').add(paymentDetails)
                   .then(()=>{
                       this.$q.notify({
                         message: 'RESERVED!',
@@ -1320,30 +1347,34 @@ export default {
                         textColor: 'white',
                         position: 'center'
                       })
+                      this.date = date.formatDate(new Date(),'YYYY-MM-DD'),
+                      this.fname = ''
+                      this.lname = ''
+                      this.place = ''
+                      this.selectCity = ''
+                      this.selectEvent = ''
+                      this.selectMotif = ''
+                      this.pax = 0 
+                      this.email = ''
+                      this.starttime = date.formatDate(new Date(), '10:50'),
+                      this.endtime = date.formatDate(new Date(), '10:50'),
+                      this.selectedPackage = []
+                      this.choiceOfFood = []
+                      this.servicesSelected = []
+                      this.choiceOfFoodAdd = []
+                      this.addonsSelected = []
+                      this.step = 1
+                      this.choiceOfTheme = []
+                      this.$router.push('/reservation')
                   })
               })
-                  this.date = date.formatDate(new Date(),'YYYY-MM-DD'),
-                  this.fname = ''
-                  this.lname = ''
-                  this.place = ''
-                  this.selectCity = ''
-                  this.selectEvent = ''
-                  this.selectMotif = ''
-                  this.pax = 0 
-                  this.email = ''
-                  this.starttime = date.formatDate(new Date(), '10:50'),
-                  this.endtime = date.formatDate(new Date(), '10:50'),
-                  this.selectedPackage = []
-                  this.choiceOfFood = []
-                  this.servicesSelected = []
-                  this.choiceOfFoodAdd = []
-                  this.addonsSelected = []
-                  this.step = 1
-                  this.choiceOfTheme = []
-                  this.$router.push('/reservation')
     },
     reservenowCash(){
         let reserveDetails = {
+            clientSelectTheme: this.choiceOfTheme,
+            clientPaxDetails: this.tab === 'FIXED' ? this.returnPaxFixed : 'NONE',
+            clientAdditionalFood: this.choiceOfFoodAdd,
+            clientUID: 'WALK-IN',
             clientReserveDate: this.date,
             clientFName: this.fname,
             clientLName: this.lname,
@@ -1356,11 +1387,9 @@ export default {
             clientEmail: this.email,
             clientStartTime: this.formatTimeInput(this.starttime),
             clientEndTime: this.formatTimeInput(this.endtime),
-            clientSelectTheme: this.choiceOfTheme,
             clientSelectPackage: this.tab === 'CUSTOMIZE' ? 'CUSTOMIZE' : this.selectedPackage[0],
             clientPackageType: this.tab,
             clientFoodChoice: this.choiceOfFood,
-            clientAdditionalFood: this.choiceOfFoodAdd,
             clientServices: this.mergePricingServices,
             clientAddons: this.mergePricingAddons,
             clientTotalPayment: this.totalpayment,
@@ -1376,11 +1405,18 @@ export default {
               let key = ref.id
               let paymentDetails = {
                   clientReservationKey: ref.id,
-                  clientPayDetails: 'CASH',
+                  clientPayDetails: {
+                      amount: this.enterAmount,
+                      source: 'CASH'
+                  },
                   clientTokenID: 'CASH',
                   clientPaymentType: 'CASH',
+                  clientUID: 'WALK-IN',
+                  transactionType: 'WALK-IN',
+                  clientEmail: this.email,
                   clientPaymentDate: date.formatDate(new Date(), 'YYYY-MM-DD')
               }
+              console.log(paymentDetails, 'detailspayment')
                   this.$firestoreApp.collection('Payments').add(paymentDetails)
                   .then(()=>{
                       this.$q.notify({
@@ -1390,27 +1426,27 @@ export default {
                         textColor: 'white',
                         position: 'center'
                       })
+                      this.date = date.formatDate(new Date(),'YYYY-MM-DD'),
+                      this.fname = ''
+                      this.lname = ''
+                      this.place = ''
+                      this.selectCity = ''
+                      this.selectEvent = ''
+                      this.selectMotif = ''
+                      this.pax = 0 
+                      this.email = ''
+                      this.starttime = date.formatDate(new Date(), '10:50'),
+                      this.endtime = date.formatDate(new Date(), '10:50'),
+                      this.selectedPackage = []
+                      this.choiceOfFood = []
+                      this.servicesSelected = []
+                      this.addonsSelected = []
+                      this.choiceOfFoodAdd = []
+                      this.step = 1
+                      this.choiceOfTheme = []
+                      this.$router.push('/reservation')
                   })
               })
-                  this.date = date.formatDate(new Date(),'YYYY-MM-DD'),
-                  this.fname = ''
-                  this.lname = ''
-                  this.place = ''
-                  this.selectCity = ''
-                  this.selectEvent = ''
-                  this.selectMotif = ''
-                  this.pax = 0 
-                  this.email = ''
-                  this.starttime = date.formatDate(new Date(), '10:50'),
-                  this.endtime = date.formatDate(new Date(), '10:50'),
-                  this.selectedPackage = []
-                  this.choiceOfFood = []
-                  this.servicesSelected = []
-                  this.addonsSelected = []
-                  this.choiceOfFoodAdd = []
-                  this.step = 1
-                  this.choiceOfTheme = []
-                  this.$router.push('/reservation')
     },
     amounttopay(){
            if(this.selectPayment.value == 'Full Payment'){

@@ -1,96 +1,208 @@
 <template>
     <q-page padding>
         <template>  
+            <q-tabs v-model="reservationtab" dense class="text-grey bg-white" active-color="orange-4" indicator-color="orange-4" align="justify" narrow-indicator >
+                <q-tab name="pending_res" label="Pending" />
+                <q-tab name="complete_res" label="Completed" />
+            </q-tabs>
+                <q-separator />
+
+                <q-tab-panels class="transparent" v-model="reservationtab" animated>
+                <q-tab-panel name="pending_res" class="">
+                    <div class="column items-center">
+                        <q-input v-model="filter" style="width:500px;" color="pink-3" standout="bg-white text-grey-8" clearable input-class="text-pink-3" label="Search Reservation" class="q-ma-md bg-white" outlined icon="search" >
+                            <template v-slot:prepend>
+                                <q-icon name="search" color="pink-3"/>
+                            </template>
+                        </q-input>
+                    </div>
+                    <div class="q-mx-lg" >
+                        <q-table grid :data="returnClientReservations" :columns="columns" :rows-per-page-options="[0]" hide-bottom :filter="filter"  :pagination.sync="pagination" class="q-px-sm full-width align-center ">
+                            <template v-slot:item="props">
+                                <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-4 grid-style-transition " :style="props.selected ? 'transform: scale(0.95);' : ''">
+                                    <q-card class="my-card"  style="border-radius:20px" >
+                                        <q-card-section class="text-grey-8">
+                                            <q-list dense>
+                                            <q-item class="q-mt-sm">
+                                                <q-item-section>
+                                                    <span class="full-width text-h6  text-weight-bold">{{props.row.clientFName}} {{props.row.clientLName}}</span>
+                                                </q-item-section>
+                                                    <q-item-section side>
+                                                    <span class="text-h6 text-weight-bold text-orange-8">{{props.row.clientReserveDate}}</span>
+                                                </q-item-section>
+                                            </q-item>
+                                            <q-item>
+                                                <q-item-section lines="1">
+                                                    <span class="full-width text-weight-bold flex flex-center">{{props.row.clientPlace}} {{props.row.clientCity}}</span>
+                                                </q-item-section>
+                                            </q-item>
+                                            <q-item class="column items-center">
+                                                <q-item-section>
+                                                    <q-btn flat label="View Full Details And Pay Balance" icon="mdi-pencil" @click="getedit(props.row)" color="green"/>
+                                                </q-item-section>
+                                            </q-item>  
+                                            <q-separator  inset class="q-mt-sm" />           
+                                            <q-item class="q-mt-sm " v-show="props.row.clientFoodChoice">
+                                            <span class="full-width text-weight-bold">FOOD Choices</span>
+                                            </q-item>
+                                            <q-item v-for="(price, index) in props.row.clientFoodChoice" :key="index" class="column items-center">
+                                                <q-item-section>
+                                                <q-item-label> {{ price.foodName }}</q-item-label>
+                                                </q-item-section>
+                                            </q-item>
+                                            <q-item v-for="(price, index) in props.row.clientAdditionalFood" :key="index" class="column items-center">
+                                                <q-item-section>
+                                                <q-item-label> {{ price.foodName }}</q-item-label>
+                                                </q-item-section>
+                                            </q-item>
+
+                                            <q-item class="q-mt-sm" v-show="props.row.clientSelectPackage.type != 'CUSTOMIZE'">
+                                            <span class="full-width text-weight-bold " >INCLUSIONS</span>
+                                            </q-item>
+                                            <q-item v-for="(price, index) in props.row.clientSelectPackage.inclusions" :key="index" class="column items-center">
+                                                <q-item-section >
+                                                <q-item-label> {{ price.inclusion }}</q-item-label>
+                                                </q-item-section>
+                                            </q-item>
+                                            <q-item v-for="(prices, indexes) in props.row.clientSelectPackage.addons" :key="indexes" class="column items-center">
+                                                <q-item-section >
+                                                <q-item-label> {{prices.addOnsQty}}x {{ prices.addons }}</q-item-label>
+                                                </q-item-section>
+                                            </q-item>
+                                            <q-item v-for="(priceses, indexeses) in props.row.clientSelectPackage.services" :key="indexeses" class="column items-center">
+                                                <q-item-section >
+                                                <q-item-label> {{priceses.serviceQty}}x {{ priceses.services }}</q-item-label>
+                                                </q-item-section>
+                                            </q-item>
+                                            <q-item v-show="props.row.clientAddons != 0 && props.row.clientServices != 0" class="q-mt-sm">
+                                            <span class="full-width text-weight-bold" >Add-Ons & Services</span>
+                                            </q-item>
+                                            <q-item v-for="(price, index) in props.row.clientAddons" :key="index" class="column items-center">
+                                                <q-item-section >
+                                                <q-item-label>{{price.addonsQty}}x {{ price.addons }}</q-item-label>
+                                                </q-item-section>
+                                            </q-item>
+                                            <q-item v-for="(prices, indexes) in props.row.clientServices" :key="indexes" class="column items-center">
+                                                <q-item-section >
+                                                <q-item-label>{{prices.servicesQty}}x {{ prices.services }}</q-item-label>
+                                                </q-item-section>
+                                            </q-item>
+                                        </q-list>
+                                        <q-separator  inset class="q-mt-sm" />
+                                        <q-card-actions align="center">
+                                            <q-btn flat label="Cancel Event" @click="geteditCancel(props.row)" icon="mdi-cancel" color="orange-8"/>
+                                            <q-separator vertical class="column items-center text-weigth-bold" />
+                                            <q-btn @click="geteditResched(props.row)" flat label="Reschedule Event" icon="mdi-calendar-edit" color="orange-8" />
+                                        </q-card-actions>
+                                        </q-card-section>
+                                    </q-card>
+                                </div>
+                            </template>
+                        </q-table>
+                    </div>
+                </q-tab-panel>
+
+                <q-tab-panel name="complete_res">
+                    <div class="column items-center">
+                        <q-input v-model="filter_com" style="width:500px;" color="pink-3" standout="bg-white text-grey-8" clearable input-class="text-pink-3" label="Search Reservation" class="q-ma-md bg-white" outlined icon="search" >
+                            <template v-slot:prepend>
+                                <q-icon name="search" color="pink-3"/>
+                            </template>
+                        </q-input>
+                    </div>
+                    <div class="q-mx-lg" >
+                        <q-table grid :data="returnClientFinishReservations" :columns="columnss" :rows-per-page-options="[0]" hide-bottom :filter="filter_com"  :pagination.sync="paginations" class="q-px-sm full-width align-center ">
+                            <template v-slot:item="props">
+                                <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-4 grid-style-transition " :style="props.selected ? 'transform: scale(0.95);' : ''">
+                                    <q-card class="my-card"  style="border-radius:20px" >
+                                        <q-card-section class="text-grey-8">
+                                            <q-list dense>
+                                            <q-item class="q-mt-sm">
+                                                <q-item-section>
+                                                    <span class="full-width text-h6  text-weight-bold">{{props.row.clientFName}} {{props.row.clientLName}}</span>
+                                                </q-item-section>
+                                                    <q-item-section side>
+                                                    <span class="text-h6 text-weight-bold text-orange-8">{{props.row.clientReserveDate}}</span>
+                                                </q-item-section>
+                                            </q-item>
+                                            <q-item>
+                                                <q-item-section lines="1">
+                                                    <span class="full-width text-weight-bold flex flex-center">{{props.row.clientPlace}} {{props.row.clientCity}}</span>
+                                                </q-item-section>
+                                            </q-item>
+                                            <q-item class="column items-center">
+                                                <q-item-section>
+                                                    <q-btn flat label="View Full Details And Pay Balance" icon="mdi-pencil" @click="getedit(props.row)" color="green"/>
+                                                </q-item-section>
+                                            </q-item>  
+                                            <q-separator  inset class="q-mt-sm" />           
+                                            <q-item class="q-mt-sm " v-show="props.row.clientFoodChoice">
+                                            <span class="full-width text-weight-bold">FOOD Choices</span>
+                                            </q-item>
+                                            <q-item v-for="(price, index) in props.row.clientFoodChoice" :key="index" class="column items-center">
+                                                <q-item-section>
+                                                <q-item-label> {{ price.foodName }}</q-item-label>
+                                                </q-item-section>
+                                            </q-item>
+                                            <q-item v-for="(price, index) in props.row.clientAdditionalFood" :key="index" class="column items-center">
+                                                <q-item-section>
+                                                <q-item-label> {{ price.foodName }}</q-item-label>
+                                                </q-item-section>
+                                            </q-item>
+
+                                            <q-item class="q-mt-sm" v-show="props.row.clientSelectPackage.type != 'CUSTOMIZE'">
+                                            <span class="full-width text-weight-bold " >INCLUSIONS</span>
+                                            </q-item>
+                                            <q-item v-for="(price, index) in props.row.clientSelectPackage.inclusions" :key="index" class="column items-center">
+                                                <q-item-section >
+                                                <q-item-label> {{ price.inclusion }}</q-item-label>
+                                                </q-item-section>
+                                            </q-item>
+                                            <q-item v-for="(prices, indexes) in props.row.clientSelectPackage.addons" :key="indexes" class="column items-center">
+                                                <q-item-section >
+                                                <q-item-label> {{prices.addOnsQty}}x {{ prices.addons }}</q-item-label>
+                                                </q-item-section>
+                                            </q-item>
+                                            <q-item v-for="(priceses, indexeses) in props.row.clientSelectPackage.services" :key="indexeses" class="column items-center">
+                                                <q-item-section >
+                                                <q-item-label> {{priceses.serviceQty}}x {{ priceses.services }}</q-item-label>
+                                                </q-item-section>
+                                            </q-item>
+                                            <q-item v-show="props.row.clientAddons != 0 && props.row.clientServices != 0" class="q-mt-sm">
+                                            <span class="full-width text-weight-bold" >Add-Ons & Services</span>
+                                            </q-item>
+                                            <q-item v-for="(price, index) in props.row.clientAddons" :key="index" class="column items-center">
+                                                <q-item-section >
+                                                <q-item-label>{{price.addonsQty}}x {{ price.addons }}</q-item-label>
+                                                </q-item-section>
+                                            </q-item>
+                                            <q-item v-for="(prices, indexes) in props.row.clientServices" :key="indexes" class="column items-center">
+                                                <q-item-section >
+                                                <q-item-label>{{prices.servicesQty}}x {{ prices.services }}</q-item-label>
+                                                </q-item-section>
+                                            </q-item>
+                                        </q-list>
+                                        <q-separator  inset class="q-mt-sm" />
+                                        <q-card-actions align="center">
+                                            <q-btn flat label="Cancel Event" @click="geteditCancel(props.row)" icon="mdi-cancel" color="orange-8"/>
+                                            <q-separator vertical class="column items-center text-weigth-bold" />
+                                            <q-btn @click="geteditResched(props.row)" flat label="Reschedule Event" icon="mdi-calendar-edit" color="orange-8" />
+                                        </q-card-actions>
+                                        </q-card-section>
+                                    </q-card>
+                                </div>
+                            </template>
+                        </q-table>
+                    </div>
+                </q-tab-panel>
+                </q-tab-panels>
         <!-- <q-page-sticky position="bottom-right" :offset="[80, 50]">
             <q-btn label="Add New Package" icon="add" class="q-my-md q-ml-md" color="orange-8" @click="addPackageDialog = true" />
                 <q-tooltip>
                     New Reservation
                 </q-tooltip>
         </q-page-sticky> -->
-            <div class="q-mx-lg" >
-                <q-table grid :data="Reservation" :columns="columns" :filter="filter"  pagination.sync="pagination" class="q-px-sm full-width align-center ">
-                    <template v-slot:item="props">
-                        <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-4 grid-style-transition " :style="props.selected ? 'transform: scale(0.95);' : ''">
-                            <q-card class="my-card"  style="border-radius:20px" >
-                                <q-card-section class="text-grey-8">
-                                    <q-list dense>
-                                    <q-item class="q-mt-sm">
-                                        <q-item-section>
-                                            <span class="full-width text-h6  text-weight-bold">{{props.row.clientFName}} {{props.row.clientLName}}</span>
-                                        </q-item-section>
-                                            <q-item-section side>
-                                            <span class="text-h6 text-weight-bold text-orange-8">{{props.row.clientReserveDate}}</span>
-                                        </q-item-section>
-                                    </q-item>
-                                    <q-item>
-                                        <q-item-section lines="1">
-                                            <span class="full-width text-weight-bold flex flex-center">{{props.row.clientPlace}} {{props.row.clientCity}}</span>
-                                        </q-item-section>
-                                    </q-item>
-                                    <q-item class="column items-center">
-                                        <q-item-section>
-                                            <q-btn flat label="View Full Details And Pay Balance" icon="mdi-pencil" @click="getedit(props.row)" color="green"/>
-                                        </q-item-section>
-                                    </q-item>  
-                                    <q-separator  inset class="q-mt-sm" />           
-                                    <q-item class="q-mt-sm " v-show="props.row.clientFoodChoice">
-                                    <span class="full-width text-weight-bold">FOOD Choices</span>
-                                    </q-item>
-                                    <q-item v-for="(price, index) in props.row.clientFoodChoice" :key="index" class="column items-center">
-                                        <q-item-section>
-                                        <q-item-label> {{ price.foodName }}</q-item-label>
-                                        </q-item-section>
-                                    </q-item>
-                                    <q-item v-for="(price, index) in props.row.clientAdditionalFood" :key="index" class="column items-center">
-                                        <q-item-section>
-                                        <q-item-label> {{ price.foodName }}</q-item-label>
-                                        </q-item-section>
-                                    </q-item>
-
-                                    <q-item class="q-mt-sm" v-show="props.row.clientSelectPackage.type != 'CUSTOMIZE'">
-                                    <span class="full-width text-weight-bold " >INCLUSIONS</span>
-                                    </q-item>
-                                    <q-item v-for="(price, index) in props.row.clientSelectPackage.inclusions" :key="index" class="column items-center">
-                                        <q-item-section >
-                                        <q-item-label> {{ price.inclusion }}</q-item-label>
-                                        </q-item-section>
-                                    </q-item>
-                                    <q-item v-for="(prices, indexes) in props.row.clientSelectPackage.addons" :key="indexes" class="column items-center">
-                                        <q-item-section >
-                                        <q-item-label> {{prices.addOnsQty}}x {{ prices.addons }}</q-item-label>
-                                        </q-item-section>
-                                    </q-item>
-                                    <q-item v-for="(priceses, indexeses) in props.row.clientSelectPackage.services" :key="indexeses" class="column items-center">
-                                        <q-item-section >
-                                        <q-item-label> {{priceses.serviceQty}}x {{ priceses.services }}</q-item-label>
-                                        </q-item-section>
-                                    </q-item>
-                                    <q-item v-show="props.row.clientAddons != 0 && props.row.clientServices != 0" class="q-mt-sm">
-                                    <span class="full-width text-weight-bold" >Add-Ons & Services</span>
-                                    </q-item>
-                                    <q-item v-for="(price, index) in props.row.clientAddons" :key="index" class="column items-center">
-                                        <q-item-section >
-                                        <q-item-label>{{price.addonsQty}}x {{ price.addons }}</q-item-label>
-                                        </q-item-section>
-                                    </q-item>
-                                    <q-item v-for="(prices, indexes) in props.row.clientServices" :key="indexes" class="column items-center">
-                                        <q-item-section >
-                                        <q-item-label>{{prices.servicesQty}}x {{ prices.services }}</q-item-label>
-                                        </q-item-section>
-                                    </q-item>
-                                </q-list>
-                                <q-separator  inset class="q-mt-sm" />
-                                <q-card-actions align="center">
-                                    <q-btn flat label="Cancel Event" icon="mdi-cancel" color="orange-8"/>
-                                    <q-separator vertical class="column items-center text-weigth-bold" />
-                                    <q-btn flat label="Reschedule Event" icon="mdi-calendar-edit" color="orange-8" />
-                                </q-card-actions>
-                                </q-card-section>
-                            </q-card>
-                        </div>
-                    </template>
-                </q-table>
-            </div>
+            
         </template>
         <q-dialog v-model="detailsAndPayment" full-height full-width >
             <q-card>
@@ -224,6 +336,49 @@
                 </q-card-actions> -->
             </q-card>
         </q-dialog>
+        <q-dialog v-model="alert">
+            <q-card>
+                <q-card-section>
+                <div class="text-h6">Cancel This Event?</div>
+                </q-card-section>
+
+                <q-card-section class="q-pt-none">
+                    <!-- {{this.reserveID}} -->
+                Are You Sure You Want To Cancel <b class="q-pa-sm col-12 text-h6 text-orange" color="orange">{{this.selectedReservation.clientFName}} {{this.selectedReservation.clientLName}}</b> Reservation?
+                </q-card-section>
+
+                <q-card-actions align="right">
+                <q-btn flat label="Cancel" color="orange-8" v-close-popup />
+                <q-btn flat label="OK" color="orange-8" @click="cancelNow" v-close-popup />
+                </q-card-actions>
+            </q-card>
+        </q-dialog>
+        <q-dialog v-model="medium" >
+            <q-card style="width: 700px; max-width: 80vw;">
+            
+            <q-card-section>
+                <div class="text-h6">Select New Time And Date</div>
+            </q-card-section>
+
+            <q-card-section class="q-pt-none">
+                <div class="column items-center">
+                    <div class="row">
+                        <div>
+                            <q-date v-model="dates" mask="YYYY/MM/DD" color="deep-orange-4" today-btn/>
+                        </div>
+                        <div class="q-pa-xl">
+                            <q-input type="time" mask="YYYY-MM-DD HH:mm:ss" class="q-pt-xl q-pl-sm" color="deep-orange-3" dense outlined style="width: 170px" v-model="startTime" hint="Start Time" />
+                            <q-input type="time" class="q-pt-xl q-ml-sm" mask="YYYY-MM-DD HH:mm:ss" dense style="width: 163px" color="deep-orange-3" outlined v-model="endTime" hint="End Time"/>
+                        </div>
+                    </div>
+                </div>
+            </q-card-section>
+
+            <q-card-actions align="right" class="bg-white text-teal">
+                <q-btn flat label="Reschedule Now" @click="rescheduleNow" v-close-popup />
+            </q-card-actions>
+            </q-card>
+        </q-dialog>
 
     </q-page>
 </template>
@@ -236,6 +391,12 @@ export default {
      },
       data(){
         return {
+            reservationtab: 'pending_res',
+            medium: false,
+            dates: date.formatDate(new Date(), 'YYYY/MM/DD'),
+            startTime: '09:00',
+            endTime:  '13:00',
+            alert: false,
             enterAmount: 0,
             loading: false,
             amount: 0,
@@ -251,10 +412,16 @@ export default {
             Reservation: [],
             selectedReservation: [],
             filter: '',
-            pagination: { sortBy: 'clientFname', descending: false, page: 1, rowsPerPage: 10},
+            filter_com: '',
+            pagination: { sortBy: 'clientReserveDate', descending: true, page: 1, rowsPerPage: 100},
+            paginations: { sortBy: 'clientReserveDate', descending: true, page: 1, rowsPerPage: 100},
             columns: [
-                { name: 'clientFname', required: true, label: 'First Name', align: 'center', field: 'clientFname', sortable: true },
-                { name: 'clientEvent', align: 'center', label: 'Event', field: 'clientEvent', sortable: true },
+                { name: 'clientFName', required: true, label: 'First Name', align: 'center', field: 'clientFName', sortable: true },
+                { name: 'clientLName', align: 'center', label: 'LastName', field: 'clientLName', sortable: true },
+            ],
+            columnss: [
+                { name: 'clientFName', required: true, label: 'First Name', align: 'center', field: 'clientFName', sortable: true },
+                { name: 'clientLName', align: 'center', label: 'LastName', field: 'clientLName', sortable: true },
             ]
         }
     },
@@ -265,6 +432,12 @@ export default {
             })
     },
     computed: {
+        returnClientReservations(){
+          return this.$lodash.filter(this.Reservation,a=>{return date.formatDate(a.clientReserveDate, 'YYYY/MM/DD') >= date.formatDate(new Date(), 'YYYY/MM/DD')})
+      },
+      returnClientFinishReservations(){
+          return this.$lodash.filter(this.Reservation,a=>{return date.formatDate(a.clientReserveDate, 'YYYY/MM/DD') < date.formatDate(new Date(), 'YYYY/MM/DD')})
+      },
         currentBalance(){
             try {
                 let totalpack =  parseInt(this.selectedReservation.clientTotalPayment) - parseInt(this.selectedReservation.clientPaidAmount)
@@ -310,8 +483,136 @@ export default {
         }
     },
     methods:{
+        rescheduleNow(){
+            var reschedBago = {
+                    clientSelectTheme: this.selectedReservation.clientSelectTheme,
+                    clientPaxDetails: this.selectedReservation.clientPaxDetails,
+                    clientEventType: this.selectedReservation.clientEventType,
+                    clientAdditionalFood: this.selectedReservation.clientAdditionalFood,
+                    clientUID: this.selectedReservation.clientUID,
+                    clientReserveDate: this.dates,
+                    clientFName: this.selectedReservation.clientFName,
+                    clientLName: this.selectedReservation.clientLName,
+                    clientPlace: this.selectedReservation.clientPlace,
+                    clientCity: this.selectedReservation.clientCity,
+                    clientEvent: this.selectedReservation.clientEvent,
+                    clientMotif: this.selectedReservation.clientMotif,
+                    clientPax: this.selectedReservation.clientPax,
+                    clientEmail: this.selectedReservation.clientEmail,
+                    clientStartTime: this.formatTimeInput(this.startTime),
+                    clientEndTime: this.formatTimeInput(this.endTime),
+                    clientSelectPackage: this.selectedReservation.clientSelectPackage,
+                    clientPackageType: this.selectedReservation.clientPackageType,
+                    clientFoodChoice: this.selectedReservation.clientFoodChoice,
+                    clientServices: this.selectedReservation.clientServices,
+                    clientAddons: this.selectedReservation.clientAddons,
+                    clientTotalPayment: this.selectedReservation.clientTotalPayment,
+                    clientPaidAmount: this.selectedReservation.clientPaidAmount,
+                    clientPayDetails: this.selectedReservation.clientPayDetails,
+                    clientTokenID: this.selectedReservation.clientTokenID,
+                    clientPaymentType: this.selectedReservation.clientPaymentType,
+                    clientReserveType: this.selectedReservation.clientReserveType,
+                    clientDateofReserve: this.selectedReservation.clientDateofReserve
+            }
+                this.$q.dialog({
+                        title: 'Reschedule Event',
+                        message: 'Reschedule This Event?',
+                        ok: 'Yes',
+                        cancel: 'Cancel'
+                    }).onOk(() => { 
+                    this.$firestoreApp.collection('Reservation').doc(this.reserveID).set(reschedBago)
+                    .then((ref) =>{
+                            this.$q.notify({
+                                message: 'Event Rescheduled!',
+                                icon: 'mdi-folder-plus-outline',
+                                color: 'orange-8',
+                                textColor: 'white',
+                                position: 'center'
+                                })
+                            })  
+                        })
+                        this.medium = false
+                        this.reschedCancel = false
+        },
+        cancelNow(){
+            let cancelled = {
+                    clientSelectTheme: this.selectedReservation.clientSelectTheme,
+                    clientPaxDetails: this.selectedReservation.clientPaxDetails,
+                    clientEventType: this.selectedReservation.clientEventType,
+                    clientAdditionalFood: this.selectedReservation.clientAdditionalFood,
+                    clientUID: this.selectedReservation.clientUID,
+                    clientReserveDate: this.selectedReservation.clientReserveDate,
+                    clientFName: this.selectedReservation.clientFName,
+                    clientLName: this.selectedReservation.clientLName,
+                    clientPlace: this.selectedReservation.clientPlace,
+                    clientCity: this.selectedReservation.clientCity,
+                    clientEvent: this.selectedReservation.clientEvent,
+                    clientMotif: this.selectedReservation.clientMotif,
+                    clientPax: this.selectedReservation.clientPax,
+                    clientEmail: this.selectedReservation.clientEmail,
+                    clientStartTime: this.selectedReservation.clientStartTime,
+                    clientEndTime: this.selectedReservation.clientEndTime,
+                    clientSelectPackage: this.selectedReservation.clientSelectPackage,
+                    clientPackageType: this.selectedReservation.clientPackageType,
+                    clientFoodChoice: this.selectedReservation.clientFoodChoice,
+                    clientServices: this.selectedReservation.clientServices,
+                    clientAddons: this.selectedReservation.clientAddons,
+                    clientTotalPayment: this.selectedReservation.clientTotalPayment,
+                    clientPaidAmount: this.selectedReservation.clientPaidAmount,
+                    clientPayDetails: this.selectedReservation.clientPayDetails,
+                    clientTokenID: this.selectedReservation.clientTokenID,
+                    clientPaymentType: this.selectedReservation.clientPaymentType,
+                    clientReserveType: this.selectedReservation.clientReserveType,
+                    clientDateofReserve: this.selectedReservation.clientDateofReserve,
+                    clientCancelDate: date.formatDate(new Date(), 'YYYY/MM/DD'),
+            }
+                this.$q.dialog({
+                    title: 'Cancel Event?',
+                    message: 'Cancel This Event?',
+                    ok: 'Yes',
+                    cancel: 'Cancel'
+                }).onOk(() => {
+                this.$firestoreApp.collection('Cancelled').add(cancelled)
+                .then(() =>{
+                    var id = this.reserveID
+                    this.$firestoreApp.collection('Reservation').doc(id).delete()
+                    this.$q.notify({
+                                message: 'Event Cancelled!',
+                                icon: 'mdi-delete',
+                                color: 'grey-8',
+                                textColor: 'white',
+                                position: 'center'
+                            })
+                            this.alert = false
+                        })
+                    })
+        },
+        geteditCancel (task) {
+            this.selectedReservation = task
+            this.reserveID = task['.key']
+            this.alert = true
+        },
+        geteditResched (task) {
+            this.selectedReservation = task
+            this.reserveID = task['.key']
+            this.medium = true
+            this.dates = task.clientReserveDate
+        },
+        formatTimeInput(time){
+        //get time to format for display
+        let baseDate = new Date(2020,1,1)
+        let arr = time.split(':')
+        let formatTime = date.addToDate(baseDate, {hours:arr[0],minutes:arr[1]})
+
+        return this.$moment(formatTime).format('LT')
+        },
         updatePaymentCard(){
             var PaymentBago = {
+                clientSelectTheme: this.selectedReservation.clientSelectTheme,
+                clientPaxDetails: this.selectedReservation.clientPaxDetails,
+                clientEventType: this.selectedReservation.clientEventType,
+                clientAdditionalFood: this.selectedReservation.clientAdditionalFood,
+                clientUID: this.selectedReservation.clientUID,
                 clientReserveDate: this.selectedReservation.clientReserveDate,
                 clientFName: this.selectedReservation.clientFName,
                 clientLName: this.selectedReservation.clientLName,
@@ -333,8 +634,8 @@ export default {
                 clientPayDetails: this.selectedReservation.clientPayDetails,
                 clientTokenID: this.selectedReservation.clientTokenID,
                 clientPaymentType: this.selectedReservation.clientPaymentType,
-                clientReserveType: 'WALK-IN',
-                clientDateofReserve: this.selectedReservation.clientDateofReserve
+                clientReserveType: this.selectedReservation.clientReserveType,
+                clientDateofReserve: this.selectedReservation.clientDateofReserve,
                 }
                     this.$firestoreApp.collection('Reservation').doc(this.reserveID).set(PaymentBago)
                     .then((ref) =>{
@@ -343,8 +644,12 @@ export default {
                             clientPayDetails: this.paydetails,
                             clientTokenID: this.token.id,
                             clientPaymentType: 'CARD',
+                            clientUID: this.selectedReservation.clientUID,
+                            transactionType: 'WALK-IN',
+                            clientEmail: this.selectedReservation.clientEmail,
                             clientPaymentDate: date.formatDate(new Date(), 'YYYY-MM-DD')
                         }
+                        console.log(paymentDetails, 'detailspayment')
                         this.$firestoreApp.collection('Payments').add(paymentDetails)
                         .then(()=>{
                             this.$q.notify({
@@ -354,13 +659,18 @@ export default {
                                 textColor: 'white',
                                 position: 'center'
                                 })
+                                this.detailsAndPayment = false
+                                this.enterAmount = 0
                             })  
                         })
-                        this.detailsAndPayment = false
-                        this.enterAmount = 0
         },
         updatePaymentCash(){
             var PaymentBago = {
+                clientSelectTheme: this.selectedReservation.clientSelectTheme,
+                clientPaxDetails: this.selectedReservation.clientPaxDetails,
+                clientEventType: this.selectedReservation.clientEventType,
+                clientAdditionalFood: this.selectedReservation.clientAdditionalFood,
+                clientUID: this.selectedReservation.clientUID,
                 clientReserveDate: this.selectedReservation.clientReserveDate,
                 clientFName: this.selectedReservation.clientFName,
                 clientLName: this.selectedReservation.clientLName,
@@ -395,9 +705,15 @@ export default {
                     .then((ref) =>{
                         let paymentDetails = {
                             clientReservationKey: this.reserveID,
-                            clientPayDetails: 'CASH',
+                            clientPayDetails: {
+                                amount: this.enterAmount,
+                                source: 'CASH'
+                            },
                             clientTokenID: 'CASH',
                             clientPaymentType: 'CASH',
+                            clientUID: this.selectedReservation.clientUID,
+                            transactionType: 'WALK-IN',
+                            clientEmail: this.selectedReservation.clientEmail,
                             clientPaymentDate: date.formatDate(new Date(), 'YYYY-MM-DD')
                         }
                         this.$firestoreApp.collection('Payments').add(paymentDetails)
@@ -409,10 +725,10 @@ export default {
                                 textColor: 'white',
                                 position: 'center'
                                 })
+                                this.detailsAndPayment = false
+                                this.enterAmount = 0
                             })  
                         })
-                        this.detailsAndPayment = false
-                        this.enterAmount = 0
                     })
         },
         payamount(){

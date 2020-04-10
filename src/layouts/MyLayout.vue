@@ -350,7 +350,7 @@ export default {
         { icon: 'dashboard', text: 'Dashboard' },
         { icon: 'mdi-calendar', text: 'Reservation' },
         { icon: 'update', text: 'Status' },
-        { icon: 'search', text: 'Saved searches' },
+        { icon: 'cancel', text: 'Cancelled Events' },
         { icon: 'supervised_user_circle', text: 'User Management' },
         { icon: 'event_note', text: 'Event Staff Scheduling' },
         { icon: 'assessment', text: 'Sales Reports' },
@@ -425,6 +425,8 @@ export default {
                 this.$router.push('/paymentReports')                   
             } else if(party[0].text == 'Reserve') {
                 this.$router.push('/mobreserve')
+            } else if(party[0].text == 'Cancelled Events') {
+                this.$router.push('/cancel')
             } else {
                 this.$router.push('/Error404')
             } 
