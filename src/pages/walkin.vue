@@ -2,9 +2,19 @@
     <q-page class="row">
           <div class="q-pa-sm col-8">
               <q-stepper v-model="step" ref="stepper" color="deep-orange-4" vertical falt active-color="orange-8" inactive-color="blue-10" animated>
-                <q-step :name="1" v-show="step === 1" title="Select Available Date" icon="settings" :done="step > 1">
-                  <div class="column items-center">
-                     <q-date v-model="date" event-color="orange-8" :events="eventsReserve" minimal class="shadow-0" mask="YYYY-MM-DD" color="orange-8" ></q-date> 
+                <q-step :name="1" v-show="step === 1" title="Select Event and Available Date" icon="settings" :done="step > 1">
+                  <div class="row items-center">
+                    <div class="col q-pa-sm q-gutter-md">
+                      <q-input v-model="eventName" type="text" label="Event Name" outlined rounded color="orange-8" />
+                      <q-select rounded color="orange-8" outlined v-model="selectEvent" :options="eventOpt" emit-value map-options label="Select Event Type" />
+                    </div>
+                    <div class="col relative-position">
+                      <div class="text-h6 text-warning absolute-center bg-grey-2 q-pa-md full-width text-center" style="z-index:2" v-show="selectEvent == ''">
+                        <q-icon name="warning" /> Please Select Event Type First !
+                      </div>
+                      <q-date v-model="date" event-color="orange-8" :events="eventsReserve" :options="date => dateToday(date)" minimal class="shadow-0  full-width" mask="YYYY-MM-DD" color="orange-8" :disable="selectEvent == ''"></q-date> 
+                    </div>
+                     
                   </div>
                 </q-step>
 
@@ -58,8 +68,8 @@
                   </div>
                   <div class="row">
                     <q-select rounded class="q-pa-sm col-4" color="orange-8" outlined v-model="selectMotif" :options="motifOpt" emit-value map-options label="Select Motif" />
-                    <q-select rounded class="q-pa-sm col-4" color="orange-8" outlined v-model="selectEvent" :options="eventOpt" emit-value map-options label="Select Event" />
-                    <q-input rounded color="orange-8" outlined class="col-4 q-pa-sm" v-model="email" label="Enter Email Address" />
+                    
+                    <q-input rounded color="orange-8" outlined class="col q-pa-sm" v-model="email" label="Enter Email Address" />
                   </div>
                   <div class="row q-mb-xl">
                       <q-card class="my-card col-4 q-ma-sm cursor-pointer" v-for="(choice,j) in Theme" :key="j" :style="returnSelectedStatusTheme(choice) ? 'transform: scale(0.95);' : ''" :class="returnSelectedStatusTheme(choice) ? 'bg-orange text-white' : ''" style="border-radius:20px;" @click.native="clickUnclickAddTheme(choice)">
@@ -710,6 +720,7 @@ export default {
         Event: [],
         City: [],
         selectEvent: '',
+        eventName: '',
         selectMotif: '',
         place: '',
         email: '',
@@ -1268,7 +1279,8 @@ export default {
             clientLName: this.lname,
             clientPlace: this.place,
             clientCity: this.selectCity,
-            clientEvent: this.selectEvent,
+            clientEvent: this.eventName,
+            clientEventType: this.selectEvent,
             clientMotif: this.selectMotif,
             clientPax: this.pax,
             clientEmail: this.email,
@@ -1337,7 +1349,8 @@ export default {
             clientLName: this.lname,
             clientPlace: this.place,
             clientCity: this.selectCity,
-            clientEvent: this.selectEvent,
+            clientEvent: this.eventName,
+            clientEventType: this.selectEvent,
             clientMotif: this.selectMotif,
             clientPax: this.pax,
             clientEmail: this.email,
@@ -1528,6 +1541,44 @@ export default {
           this.paydetails = charge
           this.reservenowCard()
       }
+    },
+    dateToday(dates){
+        // console.log('dates',dates)
+        let eventToConsider = this.selectEvent
+        let baseCount = eventToConsider == 'Debut' || eventToConsider == 'Wedding' ? 2 : 1
+        // console.log(baseCount,'baseCount')
+
+        let today = new Date()
+        let format = date.formatDate(today,'YYYY/MM/DD')
+        if(format < dates){
+            let eventsBase = []
+            let length = 0
+
+            let filter = this.Reservation.forEach(a=>{
+              if(date.formatDate(dates,'YYYY-MM-DD') == date.formatDate(a.clientReserveDate,'YYYY-MM-DD')){
+                eventsBase.push(a)
+              }
+            })
+            // console.log('dates',dates)
+            // console.log(eventsBase,'eventBase')
+
+            eventsBase.forEach(b=>{
+              let count = b.clientEventType == 'Debut' || b.clientEventType == 'Wedding' ? 2 : 1
+              length = length + count
+            })
+
+            // console.log(length,'reservedCount')
+
+            let check = length + baseCount
+            
+            if(check <= 4){
+              console.log(check,dates)
+              return true
+            } else {
+              console.log('BLOCKED',dates)
+              return false
+            }
+        }
     },
   }
 }
