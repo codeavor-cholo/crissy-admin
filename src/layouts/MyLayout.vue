@@ -356,7 +356,7 @@ export default {
         { icon: 'assessment', text: 'Sales Reports' },
         { icon: 'bar_chart', text: 'Most Popular Choices' },
         { icon: 'local_atm', text: 'Payment Reports' },
-        { icon: 'mdi-calendar', text: 'Reserve' },
+        // { icon: 'mdi-calendar', text: 'Reserve' },
       ],
       links2: [
         { icon: 'mdi-briefcase-plus', text: 'Position' },
