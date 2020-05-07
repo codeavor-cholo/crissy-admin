@@ -24,7 +24,7 @@
                             <div class="col" style="font-size:16px"><b>To: </b>{{sched.clientEndTime}}</div>
                         </div>
                         <div>
-                            <q-btn dense class="full-width q-mb-md" color="orange-7" label="view Reservation Details" outline=""/>
+                            <q-btn dense class="full-width q-mb-md" color="orange-7" label="view Reservation Details" @click="$router.push('/mobreserve/'+sched.reservationKey)" outline=""/>
                             <q-btn class="full-width" color="orange-7" @click="updateStatus(sched)" v-if="returnSelectedEventStatus(sched).length < StatusArr.length">Update Status <div class="full-width text-caption text-capitalize">Next: {{returnNextStatus(sched)}}</div></q-btn>
                             <q-btn class="full-width" color="green" v-else disable=""><q-icon name="check" class="q-mr-md" /> Event Venue is Ready !</q-btn>
                         </div>
