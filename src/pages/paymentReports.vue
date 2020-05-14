@@ -148,7 +148,8 @@ export default {
                     a.clientReserveDate = date.formatDate(a.clientReserveDate,'YYYY-MM-DD')
                     a.id = a['.key'].substr(8).toUpperCase()
                     a.clientName = a.clientFName+' '+a.clientLName
-                    a.totalPaid = this.$lodash.sumBy(payments,'clientPayDetails.amount')
+                    a.totalPaid = this.$lodash.sumBy(payments, a=>{
+                        return parseInt(a.clientPayDetails.amount)})
                     a.toPayAmount = a.clientTotalPayment
                     a.balance = a.clientTotalPayment - a.totalPaid
                     a.allPayments = payments

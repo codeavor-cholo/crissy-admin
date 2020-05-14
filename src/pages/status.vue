@@ -109,6 +109,7 @@ export default {
       done: false, 
       ready: false,
       StaffSchedules: [],
+      DashboardUsers: [],
       accountLoggedIn: null,
       EventStatus: [],
       selectedEvent: null,
@@ -140,7 +141,11 @@ export default {
          this.$binding('EventStatus', this.$firestoreApp.collection('EventStatus'))
         .then(EventStatus => {
         console.log(EventStatus, 'EventStatus')
-        })       
+        }),
+        this.$binding('DashboardUsers', this.$firestoreApp.collection('DashboardUsers'))
+        .then(DashboardUsers => {
+        console.log(DashboardUsers, 'DashboardUsers')
+        })      
   },
   computed:{
       returnStaffScheduleInOrder(){
@@ -166,7 +171,7 @@ export default {
 
                 a.dateBasis = create
 
-                return a.staffKey == this.accountLoggedIn.uid && dates >= today
+                return a.staffKey == this.accountLoggedIn.uid || this.returnUserPosition(this.accountLoggedIn.uid) == 'Admin' && dates >= today
               })
               console.log(filter,'filter')
 
@@ -201,6 +206,15 @@ export default {
 
   },
   methods:{
+      returnUserPosition(uid){
+          try {
+              return this.DashboardUsers.filter(a=>{
+                  return a['.key'] == uid
+              })[0].position
+          } catch (error) {
+              return 'Admin'
+          }
+      },
       returnSelectedEventStatus(event){
           try {
               console.log('returnSelectedEventStatus',this.$lodash.filter(this.EventStatus,a=>{return a.scheduleKey == event['.key']}))

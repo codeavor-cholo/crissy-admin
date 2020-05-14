@@ -130,7 +130,7 @@ export default {
 
                 for(var x = 0; x < map.length; x++){
                     let sum = this.$lodash.sumBy(map[x].paymentArray, a=>{
-                        return a.clientPayDetails.amount
+                        return parseInt(a.clientPayDetails.amount)
                     })
                     map[x].totalSales = sum
                 }
