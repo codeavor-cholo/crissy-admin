@@ -124,10 +124,11 @@ export default {
          splashscreen: true,   
          isPwd: true,
          registerDialog: true,
+         users: []
         }
     },
     mounted() {
-        
+      this.$binding('users', this.$firestoreApp.collection('DashboardUsers'))      
     },
     
     created(){
@@ -142,6 +143,13 @@ export default {
               if (user) {
                 console.log('createdUser',user)
                   self.$router.push('/dashboard')
+
+                if(self.returnUserPosition(user.uid) == 'Admin' || self.returnUserPosition(user.uid) == 'Secretary'){
+                  self.$router.push('/dashboard')
+                } else {
+                  self.$router.push('/status')
+                }
+
               } else {
                   // No user is signed in.
                   self.$router.push('/')
@@ -152,6 +160,15 @@ export default {
 
     },
     methods: {
+        returnUserPosition(uid){
+          try {
+            return this.users.filter(a=>{
+              return a['.key'] == uid
+            })[0].position
+          } catch (error) {
+            return 'Admin'
+          }
+        },
         signup(){
           this.$firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
                 .then(result => {

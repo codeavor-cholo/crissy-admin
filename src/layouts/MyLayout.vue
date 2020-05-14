@@ -91,9 +91,9 @@
           <q-btn v-if="$q.screen.gt.sm" round dense flat color="text-grey-7" icon="apps">
             <q-tooltip>Google Apps</q-tooltip>
           </q-btn>
-          <q-btn round dense flat color="white" icon="notifications">
+          <q-btn round dense flat color="white" icon="notifications" @click="$router.push('/notifications')">
             <q-badge color="orange-8" text-color="white" floating>
-              2
+              {{returnLengthNotif}}
             </q-badge>
             <q-tooltip>Notifications</q-tooltip>
           </q-btn>
@@ -213,9 +213,9 @@
           <q-btn v-if="$q.screen.gt.sm" round dense flat color="text-grey-7" icon="apps">
             <q-tooltip>Google Apps</q-tooltip>
           </q-btn>
-          <q-btn round dense flat color="white" icon="notifications">
+          <q-btn round dense flat color="white" icon="notifications" @click="$router.push('/notifications')">
             <q-badge color="orange-8" text-color="white" floating>
-              2
+              {{returnLengthNotif}}
             </q-badge>
             <q-tooltip>Notifications</q-tooltip>
           </q-btn>
@@ -262,7 +262,7 @@
     >
       <q-scroll-area class="fit">
         <q-list padding class="text-orange-8">
-          <q-item @click="filterDashboard(link)" class="GNL__drawer-item" v-ripple v-for="link in links1" :key="link.text" clickable>
+          <q-item @click="filterDashboard(link)" class="GNL__drawer-item" v-ripple v-for="link in links1" :key="link.text" clickable v-show="returnUserPermissions(link.text)">
             <q-item-section avatar>
               <q-icon class="text-orange-8" :name="link.icon" />
             </q-item-section>
@@ -272,7 +272,7 @@
           </q-item>
 
           <q-separator inset class="q-my-sm" />
-          <q-expansion-item :content-inset-level="0.5" icon="settings" label="File Maintenance"  default-close>
+          <q-expansion-item :content-inset-level="0.5" icon="settings" label="File Maintenance"  default-close v-show="returnUserPermissions('File Maintenance')">
               <q-expansion-item :content-inset-level="0.5" icon="mdi-package-variant" label="Package Management"  default-close>
               <q-item @click="filterDashboardII(link)" class="GNL__drawer-item" v-ripple v-for="link in links2" :key="link.text" clickable>
                 <q-item-section avatar>
@@ -332,10 +332,19 @@
 <script>
 import { fasGlobeAmericas, fasFlask } from '@quasar/extras/fontawesome-v5'
 import { QSpinnerFacebook } from 'quasar'
+import { date } from 'quasar'
 export default {
   name: 'GoogleNewsLayout',
   data () {
     return {
+      DashboardUsers: [],
+      AdminNotifications: [],
+      Reservation: [],
+      partyTrayOrders: [],
+      Payments: [],
+      StaffSchedules: [],
+      Customers: [],
+      userPosition: '',
       leftDrawerOpen: false,
       search: '',
       showAdvanced: false,
@@ -349,7 +358,8 @@ export default {
         { icon: 'mdi-walk', text: 'Walk-In Reservation' },
         { icon: 'dashboard', text: 'Dashboard' },
         { icon: 'mdi-calendar', text: 'Reservation' },
-        { icon: 'update', text: 'Status' },
+        { icon: 'update', text: 'Event Status' },
+        { icon: 'update', text: 'Staff Dashboard' },
         { icon: 'cancel', text: 'Cancelled Events' },
         { icon: 'supervised_user_circle', text: 'User Management' },
         { icon: 'event_note', text: 'Event Staff Scheduling' },
@@ -359,7 +369,7 @@ export default {
         // { icon: 'mdi-calendar', text: 'Reserve' },
       ],
       links2: [
-        { icon: 'mdi-briefcase-plus', text: 'Position' },
+        // { icon: 'mdi-briefcase-plus', text: 'Position' },
         { icon: 'mdi-city', text: 'City' },
         { icon: 'mdi-palette', text: 'Motif' },
         { icon: 'mdi-brightness-6', text: 'Theme' },
@@ -395,10 +405,126 @@ export default {
         }
     })
   },
+  mounted(){
+        this.$binding('DashboardUsers', this.$firestoreApp.collection('DashboardUsers')),
+        this.$binding('AdminNotifications', this.$firestoreApp.collection('AdminNotifications')),
+        this.$binding('Reservation', this.$firestoreApp.collection('Reservation')),
+        this.$binding('partyTrayOrders', this.$firestoreApp.collection('partyTrayOrders')),
+        this.$binding('Payments', this.$firestoreApp.collection('Payments')),
+        this.$binding('StaffSchedules', this.$firestoreApp.collection('StaffSchedules')),
+        this.$binding('Customers', this.$firestoreApp.collection('Customers'))    
+  },
   computed:{
-  
+
+        returnUserNotifications(){
+            try {
+                let user = this.$firebase.auth().currentUser
+
+                let details =  this.DashboardUsers.filter(a=>{
+                    return a['.key'] == user.uid
+                })[0]
+
+                console.log(details,'details user')
+                if(details.position == 'Admin'){
+                    console.log(this.$lodash.orderBy(this.returnNotifsWithTypes,'dateTime','desc'),'types')
+                    // return this.$lodash.orderBy(this.returnNotifsWithTypes,'dateTime','desc')
+                    return this.$lodash.orderBy(this.returnNotifsWithTypes,a=>{
+                        return this.$moment(a.dateTime).toString()
+                    },'desc') 
+                } else if(details.position == 'Staff' || details.position == 'Delivery Boy'){
+                    let filter = this.returnNotifsWithTypes.filter(a=>{
+                        return a.typeOf == 'schedule' && a.staffKey == user.uid
+                    })
+                    console.log(this.$lodash.orderBy(filter,'dateTime','desc'),'types')
+                    return this.$lodash.orderBy(filter,a=>{
+                        return this.$moment(a.dateTime).toString()
+                    },'desc') 
+                } else {
+                    let filter = this.returnNotifsWithTypes.filter(a=>{
+                        return a.typeOf != 'schedule' || a.typeOf != 'status'
+                    })     
+                    return this.$lodash.orderBy(filter,a=>{
+                        return this.$moment(a.dateTime).toString()
+                    },'desc')               
+                }
+
+                
+                return ''
+            } catch (error) {
+                return []
+            }
+        },
+        returnLengthNotif(){
+          try {
+            let today = date.formatDate(new Date(),'MM-DD-YYYY')
+            let filter = this.returnUserNotifications.filter(a=>{
+              return date.formatDate(new Date(a.dateTime),'MM-DD-YYYY') == today
+            })
+            return filter.length
+          } catch (error) {
+            return 0
+          }
+        },
+        returnNotifsWithTypes(){
+            try {
+                let notifs = this.AdminNotifications.map(a=>{
+                if(a.message.includes('Reservation')){
+                    a.typeOf = 'reserve'
+                    return {...a,...this.returnDataOfNotifs('reserve',a.reservationKey)}
+                } else if (a.message.includes('Order')) {
+                    a.typeOf = 'order'
+                    return {...a,...this.returnDataOfNotifs('order',a.reservationKey)}
+                } else if (a.message.includes('Payment')){
+                    a.typeOf = 'payment'
+                    a.clientName = this.returnCustomerData(a.userID).displayName
+                    return {...a,...this.returnDataOfNotifs('payment',a.paymentKey)}
+                } else if (a.message.includes('Schedule')){
+                    a.typeOf = 'schedule'
+                    a.clientName = a.clientFName+ ' '+a.clientLName
+                    return a
+                } else {
+                    a.typeOf = 'status'
+                    return {...a,...this.returnDataOfNotifs('status',a.reservationKey)}
+                }
+                })
+
+                
+                return notifs
+            } catch (error) {
+                return []
+            }
+        }  
   },
   methods: {
+        returnUserPermissions(linkText){
+          try {
+            let user = this.$firebase.auth().currentUser
+
+            let details =  this.DashboardUsers.filter(a=>{
+                return a['.key'] == user.uid
+            })[0]     
+            
+            console.log('position return',details.position)
+            
+            if(details.position == 'Admin'){
+              return true
+            } else if (details.position == 'Secretary'){
+              if(linkText == 'User Management'){
+                return false
+              } else {
+                return true
+              }
+            } else {
+              if(linkText == 'Staff Dashboard'){
+                return true
+              } else {
+                return false
+              }
+            }         
+          } catch (error) {
+            return true
+          }
+        },
     filterDashboard(link){
             let party = this.$lodash.filter(this.links1, a=>{
                     return a.text == link.text
@@ -410,7 +536,7 @@ export default {
                 this.$router.push('/dashboard')
             } else if(party[0].text == 'Reservation') {
                 this.$router.push('/reservation')
-            } else if(party[0].text == 'Status') {
+            } else if(party[0].text == 'Event Status' || party[0].text == 'Staff Dashboard') {
                 this.$router.push('/status')  
             } else if(party[0].text == 'User Management') {
                 this.$router.push('/users')  
@@ -520,7 +646,63 @@ export default {
                   })
             })
             
-    }
+    },
+    returnDataOfNotifs(typeOf,key){
+        try {
+            if(typeOf == 'reserve'){
+                return this.Reservation.filter(a=>{
+                    return a['.key'] == key
+                })[0]
+            } else if(typeOf == 'order'){
+                return this.partyTrayOrders.filter(a=>{
+                    return a['.key'] == key
+                })[0]
+            } else if(typeOf == 'payment'){
+                return this.Payments.filter(a=>{
+                    return a['.key'] == key
+                })[0]
+            } else {
+                let reserve = this.Reservation.concat(this.partyTrayOrders)
+                reserve.forEach(a=>{
+                    if(a.deliveryDate == null){
+                        a.transactionType = 'EVENT RESERVATION'
+                        a.clientName = a.clientFName+ ' '+a.clientLName
+                    } else {
+                        a.transactionType = 'PARTY TRAY ORDER'
+                        a.clientName= a.firstName+ ' '+a.lastName
+                    }
+                })
+                console.log(reserve,'concat orders and reservation')
+                return reserve.filter(a=>{
+                    return a['.key'] == key
+                })[0]
+            }
+        } catch (error) {
+            return []
+        }
+    },
+    returnCustomerData(key){
+        try {
+            return this.Customers.filter(a=>{
+                return a['.key'] == key
+            })[0]
+        } catch (error) {
+            return []
+        }
+    },
+    returnUserPosition(){
+      try {
+        let user = {...this.$firebase.auth().currentUser}
+        return this.DashboardUsers.filter(a=>{
+          return a['.key'] == user.uid
+        })[0]
+      } catch (error) {
+        return ''
+      }
+    },
+    formatNumber(num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    },
   }
 }
 </script>

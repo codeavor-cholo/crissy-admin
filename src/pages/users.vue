@@ -35,14 +35,14 @@
                                                         <q-item-label>{{props.row.position}}</q-item-label>   
                                                     </q-item-section>
                                                 </q-item>
-                                                <q-item>
+                                                <!-- <q-item>
                                                     <q-item-section class="text-caption">
                                                         <q-item-label >Permissions</q-item-label>                                                    
                                                     </q-item-section>
                                                     <q-item-section class="text-caption" side>
                                                         <q-item-label v-for="per in props.row.permissions" :key="per">{{per}}</q-item-label>   
                                                     </q-item-section>
-                                                </q-item>
+                                                </q-item> -->
                                             </q-list>
                                             <q-separator inset />
                                             <q-card-actions class="row justify-between">
@@ -75,7 +75,7 @@
                         <q-input v-model="newUser.email" type="email" label="Email Address" color="orange" outlined=""/>
                         <q-input v-model="newUser.password" type="password" label="Password" color="orange" outlined=""/>
                         <q-input v-model="newUser.confirmPassword" type="password" label="Confirm Password" color="orange" outlined=""/>
-                        <div>
+                        <!-- <div>
                         <span class="text-weight-bold">PERMISSIONS</span>
                         <q-option-group
                             v-model="newUser.permissions"
@@ -84,7 +84,7 @@
                             inline=""
                             :options="permissionOpt"
                         />
-                        </div>
+                        </div> -->
                     </div>
                 </q-card-section>
 
