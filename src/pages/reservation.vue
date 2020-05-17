@@ -39,6 +39,7 @@
                                             <q-item class="column items-center">
                                                 <q-item-section>
                                                     <q-btn flat label="View Full Details And Pay Balance" icon="mdi-pencil" @click="getedit(props.row)" color="green"/>
+                                                    <q-btn flat label="Print Contract" icon="print" @click="geteditprint(props.row)" color="green"/>
                                                 </q-item-section>
                                             </q-item>  
                                             <q-separator  inset class="q-mt-sm" />           
@@ -133,6 +134,7 @@
                                             <q-item class="column items-center">
                                                 <q-item-section>
                                                     <q-btn flat label="View Full Details And Pay Balance" icon="mdi-pencil" @click="getedit(props.row)" color="green"/>
+                                                    <q-btn flat label="Print Contract" icon="print" @click="geteditprint(props.row)" color="green"/>
                                                 </q-item-section>
                                             </q-item>  
                                             <q-separator  inset class="q-mt-sm" />           
@@ -353,6 +355,146 @@
                 </q-card-actions>
             </q-card>
         </q-dialog>
+        <q-dialog
+        v-model="dialog"
+        persistent
+        :maximized="maximizedToggle"
+        transition-show="slide-right"
+        transition-hide="slide-left"
+        >
+        <q-card class="shadow-0">
+            <q-bar>
+            <q-space />
+            <q-btn dense flat icon="close" class="bodyText" v-close-popup>
+                <q-tooltip content-class="bg-white text-primary">Close</q-tooltip>
+            </q-btn>
+            </q-bar>
+
+            <q-card-section>
+                <div class="row flex flex-center">
+                    <q-img src="statics/logo.png" :ratio="1" style="width:3.5em;" class="q-ml-sm"/>
+                    <q-toolbar-title v-if="$q.screen.gt.xs" shrink class="row items-center no-wrap">
+                        <strong>Crissy's Meal Magic Catering Services</strong>
+                    </q-toolbar-title>
+                </div>
+            </q-card-section>
+                
+            <q-card-section class="q-pt-none">
+                <div class="row">
+                    <div class="column col-9">
+                        <b class="col">FULLNAME: <i>{{this.selectedReservation.clientFName}} {{this.selectedReservation.clientLName}}</i></b> 
+                        <b class="col">PLACE OF EVENTS: <i>{{this.selectedReservation.clientPlace}} {{this.selectedReservation.clientCity}}</i></b>
+                        <b v-if="this.selectedReservation.clientPackageType != 'FIXED'" class="col">Guest: <i>{{this.selectedReservation.clientPax}}Guest</i></b>
+                        <b v-else class="col">PAX: <i>{{this.selectedReservation.clientSelectPackage.adultPax}} Adults & {{this.selectedReservation.clientSelectPackage.kidPax}} Kids</i></b>
+                        <b class="col">DATE OF EVENTS: <i>{{this.selectedReservation.clientReserveDate}}</i></b> 
+                        <b class="col">TIME: <i>{{this.selectedReservation.clientStartTime}} - {{this.selectedReservation.clientEndTime}}</i></b>
+                        <b class="col">Email: <i>{{this.selectedReservation.clientEmail}}</i></b>
+                        <b class="col">Package Type: <i>{{this.selectedReservation.clientPackageType}} PACKAGE</i></b>
+                    </div> 
+                    <div class="column col-3">
+                        <b>Motif: <i>{{this.selectedReservation.clientMotif}}</i></b>
+                        <b>Theme: <i>{{this.selectedReservation.clientMotif}}</i></b>
+                        <b>EVENT: <i>{{this.selectedReservation.clientEvent}}</i></b>
+                    </div>
+                </div>
+                <q-separator inset />           
+                <div class="row">
+                    <div class="q-pa-sm col-4">
+                        <q-item>
+                        <span class="full-width text-weight-bold">FOOD CHOICES</span>
+                        </q-item>
+                        <q-list dense v-for="(price, index) in this.selectedReservation.clientFoodChoice" :key="index">
+                            <q-item>
+                                <q-item-section>
+                                <li> {{ price.foodName }}</li>
+                                </q-item-section>
+                            </q-item>
+                        </q-list>
+                        <span v-show="this.selectedReservation.clientAdditionalFood != null" class="full-width text-weight-bold">Additional Food</span>
+                        <q-list dense v-for="(price, index) in this.selectedReservation.clientAdditionalFood" :key="index">
+                            <q-item>
+                                <q-item-section>
+                                <li> {{ price.foodName }}</li>
+                                </q-item-section>
+                            </q-item>
+                        </q-list>
+                    </div>
+                    <div v-show="this.selectedReservation.clientPackageType != 'CUSTOMIZE'" class="q-pa-sm col-4">
+                        <q-item>
+                            <span class="full-width text-weight-bold " >INCLUSIONS</span>
+                        </q-item>
+                            <q-item dense v-for="(price, index) in this.returnFree.inclusions" :key="index" class="">
+                                <q-item-section >
+                                    <li>
+                                        {{ price.inclusion }}
+                                    </li>
+                                </q-item-section>
+                            </q-item>
+                            <q-item dense v-for="(prices, indexes) in this.returnFree.addons" :key="indexes" class="">
+                                <q-item-section >
+                                <li> {{prices.addOnsQty}}x {{ prices.addons }}</li>
+                                </q-item-section>
+                            </q-item>
+                            <q-item dense v-for="(priceses, indexeses) in this.returnFree.services" :key="indexeses" class="">
+                                <q-item-section >
+                                <li> {{priceses.serviceQty}}x {{ priceses.services }}</li>
+                                </q-item-section>
+                        </q-item>
+                    </div>
+                    <div v-show="this.selectedReservation.clientAddons != 0 || this.selectedReservation.clientServices != 0" class="q-pa-sm col-4">
+                        <q-item>
+                            <span class="full-width text-weight-bold " >Add-Ons & Services</span>
+                        </q-item>
+                        <q-item dense v-for="(price, index) in this.selectedReservation.clientAddons" :key="index" class="">
+                            <q-item-section >
+                                <li>
+                                    {{price.addonsQty}}x {{ price.addons }}
+                                </li>
+                            </q-item-section>
+                        </q-item>
+                        <q-item dense v-for="(price, index) in this.selectedReservation.clientServices" :key="index" class="">
+                            <q-item-section >
+                                <li>
+                                    {{price.servicesQty}}x {{ price.services }}
+                                </li>
+                            </q-item-section>
+                        </q-item>
+                    </div>
+                    
+                   
+                </div>
+                 <div class="row flex flex-center">
+                    <q-page-sticky position="bottom" :offset="[18, 18]">
+                        <q-btn class="bodyText" label="Print" color="deep-orange-8" @click="printNow" icon="print" />
+                    </q-page-sticky>
+                </div>
+                <div class="q-pa-sm col">
+                        <div class="column">
+                            <b>Total Payment: <i>P</i> {{this.selectedReservation.clientTotalPayment}}</b>
+                            <b>Paid Amount: <i>P</i> {{this.selectedReservation.clientPaidAmount}}</b>
+                            <b>Current Balance: <q-btn flat dense @click="payamount" color="orange-8"><i v-show="this.currentBalance != 0">P&nbsp;</i> {{this.currentBalance === 0 ? 'NO BALANCE' : this.currentBalance,}}</q-btn></b>
+                        </div>
+                </div>
+                <div>
+                    <div class="row flex flex-center text-h6 text-weight-bold">TERMS AND CONDITIONS</div>
+                    <div class="q-pt-md column flex flex-center text-weight-bold">
+                        <li> sadasdasldkasldkasldl sakdaljdklajsk djaslkd jaskdj lska </li>
+                        <li> sadasdasldkasldkasldl sakdaljdksadsdasasdalajsk djaslkd jaskdj lska </li>
+                        <li> sadasdasldkasldkasldl sakdaljdklassasdajsk djaslkd jaskdj lska </li>
+                        <li> sadasdasldkasldkasldl sakdaljdklajsk djaslkd jaskdj lska </li>
+                        <li> sadasdasldkasldkasldl sakdaljdklajsk djassadsdalkd jaskdj lska </li>
+                        <li> sadasdasldkasldkasldl sakdaljdklajsk djaslkd jaasdasdaskdj lska </li>
+                    </div>
+
+                </div>
+                <div class="col q-pa-md q-pt-md">
+                    <div class="text-h6">Prepared By:</div>
+                    <br>
+                    <div style="margin-top: -20px" class="q-pl-xl q-ml-xl text-weight-bold">{{userEmail.toUpperCase()}}</div>
+                </div>
+            </q-card-section>
+        </q-card>
+        </q-dialog>
         <q-dialog v-model="medium" >
             <q-card style="width: 700px; max-width: 80vw;">
             
@@ -391,6 +533,8 @@ export default {
      },
       data(){
         return {
+            dialog: false,
+            maximizedToggle: true,
             reservationtab: 'pending_res',
             medium: false,
             dates: date.formatDate(new Date(), 'YYYY/MM/DD'),
@@ -424,6 +568,23 @@ export default {
                 { name: 'clientLName', align: 'center', label: 'LastName', field: 'clientLName', sortable: true },
             ]
         }
+    },
+    created() {
+        let self = this
+        this.$firebase.auth().onAuthStateChanged(function(user) {
+            
+            if (user) {
+            let gg = {...user}
+            console.log('createdUser',user)
+            console.log('createdUser',user.uid)
+            let username = gg.email.toString().split('@')
+            self.userEmail = username[0]
+            self.accountLoggedIn = gg
+
+            } else {
+                self.$router.push('/')
+            }
+        })
     },
     mounted () {
         this.$binding('Reservation', this.$firestoreApp.collection('Reservation'))
@@ -483,6 +644,9 @@ export default {
         }
     },
     methods:{
+        printNow(){
+            window.print();
+        },
         rescheduleNow(){
             var reschedBago = {
                     clientSelectTheme: this.selectedReservation.clientSelectTheme,
@@ -734,6 +898,11 @@ export default {
         payamount(){
             this.enterAmount = this.currentBalance
         },
+        geteditprint (task) {
+            this.selectedReservation = task
+            this.reserveID = task['.key']
+            this.dialog = true
+        },
         getedit (task) {
             this.selectedReservation = task
             this.reserveID = task['.key']
@@ -779,3 +948,13 @@ export default {
     }
 }
 </script>
+<style type = "text/css">
+      @media print {
+        .bodyText {
+            display: none;
+          }
+        ::-webkit-scrollbar {
+            display: none;
+        }
+      }
+</style>
