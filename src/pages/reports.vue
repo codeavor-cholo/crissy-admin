@@ -31,7 +31,7 @@
                 {{returnType}} Sales Reports
             </div>
             <div class="q-pr-md row justify-between">
-                <q-btn color="deep-orange-8" icon="print" class="q-mr-md"/>
+                <q-btn color="deep-orange-8" @click="dialog = true" icon="print" class="q-mr-md"/>
                 <q-input dense v-model="filter" clearable type="text" label="Search Records" color="orange-6" class="bg-white" outlined icon="search">
                     <template v-slot:prepend>
                         <q-icon name="search" color="orange-6"/>
@@ -83,11 +83,98 @@
             </q-card-section>
         </q-card>
         </div>
+        <!-- Print -->
+        <q-dialog
+        v-model="dialog"
+        persistent
+        :maximized="maximizedToggle"
+        transition-show="slide-right"
+        transition-hide="slide-left"
+        >
+        <q-card class="shadow-0">
+            <q-bar>
+            <q-space />
+            <q-btn dense flat icon="close" class="bodyText" v-close-popup>
+                <q-tooltip content-class="bg-white text-primary">Close</q-tooltip>
+            </q-btn>
+            </q-bar>
 
+            <q-card-section>
+                <div class="row flex flex-center">
+                    <q-img src="statics/logo.png" :ratio="1" style="width:3.5em;" class="q-ml-sm"/>
+                    <q-toolbar-title v-if="$q.screen.gt.xs" shrink class="row items-center no-wrap">
+                        <strong>Crissy's Meal Magic Catering Services</strong>
+                    </q-toolbar-title>
+                </div>
+            </q-card-section>
+                
+            <q-card-section class="q-pt-none">
+                <div class="q-pt-md">
+                <q-table hide-bottom="" flat dense :data="returnReports" :binary-state-sort="true" :columns="columns" :pagination.sync="pagination" :filter="filter" class="q-px-sm full-width align-center ">
+                    <template v-slot:body="props">
+                        <q-tr :props="props">
+                        <q-td key="date" :props="props">
+                            {{type == 'day' ? $moment(props.row.date).format('LL') : props.row.date }}
+                        </q-td>
+                        <q-td key="totalSales" :props="props" class="text-overline text-grey-10">
+                        ₱ {{ formatNumber(props.row.totalSales) }}.00
+                        </q-td>
+                        </q-tr>
+                    </template>
+                    <template v-slot:header="props">
+                    <q-tr :props="props">
+                    <q-th
+                        v-for="col in props.cols"
+                        :key="col.name"
+                        :props="props"
+                        v-show="col.name !== 'basis'"
+                    >
+                        {{ col.label }}
+                    </q-th>
+                    </q-tr>
+                    </template>
+                </q-table>
+                <q-card class="my-card q-mt-md" flat>
+                    <q-card-section class="row justify-between">
+                        <div class="text-h6">Total Sales</div>
+                        <div class="text-h6 text-deep-orange-8"><b>₱ {{ formatNumber(returnTotalSales) }}.00</b></div>
+                    </q-card-section>
+                </q-card>
+                </div>
+                <div class="col q-pa-md">
+                    <div class="text-h6">Prepared By:</div>
+                    <br>
+                    <div style="margin-top: -20px" class="q-pl-xl q-ml-xl text-h6">{{userEmail.toUpperCase()}}</div>
+                </div>
+                <div class="row flex flex-center">
+                    <q-page-sticky position="bottom" :offset="[18, 18]">
+                        <q-btn class="bodyText" label="Print" color="deep-orange-8" @click="printNow" icon="print" />
+                    </q-page-sticky>
+                </div>
+            </q-card-section>
+        </q-card>
+        </q-dialog>
     </q-page>
 </template>
 <script>
 export default {
+    created() {
+        let self = this
+        this.$firebase.auth().onAuthStateChanged(function(user) {
+            
+            if (user) {
+            let gg = {...user}
+            console.log('createdUser',user)
+            console.log('createdUser',user.uid)
+            let username = gg.email.toString().split('@')
+            self.userEmail = username[0]
+            self.accountLoggedIn = gg
+
+            } else {
+                self.$router.push('/')
+            }
+        })
+    },
     mounted () {
         this.$binding('Payments', this.$firestoreApp.collection('Payments'))
             .then(Payments => {
@@ -96,6 +183,8 @@ export default {
     },
     data () {
         return {
+            dialog: false,
+            maximizedToggle: true,
             type: 'day',
             drawerRight: false,
             Payments: [],
@@ -205,6 +294,9 @@ export default {
         },
     },
     methods: {
+        printNow(){
+            window.print();
+        },
         formatNumber(num) {
             return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
         },
@@ -242,3 +334,13 @@ export default {
     }
 }
 </script>
+<style type = "text/css">
+      @media print {
+        .bodyText {
+            display: none;
+          }
+        ::-webkit-scrollbar {
+            display: none;
+        }
+      }
+</style>
