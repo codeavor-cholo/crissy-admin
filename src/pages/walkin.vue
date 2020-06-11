@@ -1585,7 +1585,8 @@ export default {
         // console.log(baseCount,'baseCount')
 
         let today = new Date()
-        let format = date.formatDate(today,'YYYY/MM/DD')
+        let today1week = date.addToDate(today,{days: 6})
+        let format = date.formatDate(today1week,'YYYY/MM/DD')
         if(format < dates){
             let eventsBase = []
             let length = 0

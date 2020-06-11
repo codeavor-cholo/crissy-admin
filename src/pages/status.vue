@@ -151,6 +151,7 @@ export default {
       returnStaffScheduleInOrder(){
           try {
               let today = date.formatDate(new Date(), 'YYYY/MM/DD')
+              console.log(today,'today')
               let filter = this.$lodash.filter(this.StaffSchedules,a=>{
                 let dates = date.formatDate(a.clientReserveDate, 'YYYY/MM/DD')
                 let dateArr = dates.split('/')
@@ -171,7 +172,7 @@ export default {
 
                 a.dateBasis = create
 
-                return a.staffKey == this.accountLoggedIn.uid || this.returnUserPosition(this.accountLoggedIn.uid) == 'Admin' && dates >= today
+                return a.staffKey == this.accountLoggedIn.uid && dates >= today || this.returnUserPosition(this.accountLoggedIn.uid) == 'Admin' && dates >= today
               })
               console.log(filter,'filter')
 

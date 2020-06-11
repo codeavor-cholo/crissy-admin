@@ -76,8 +76,8 @@
             </q-card-section>
         </q-card> -->
     </div>
-    <div class="">
-        <q-card bordered class="my-card" flat>
+    <div class="q-my-md">
+        <q-card bordered class="my-card q-pa-md" flat>
             <div class="row q-pt-lg">
                 <div class="text-h6 q-mr-md"><span class="text-capitalize">{{type}}</span></div>
                 <div><q-select v-model="type" :options="['daily sales','monthly sales','yearly sales']" outlined="" dense style="width:150px;"/></div>

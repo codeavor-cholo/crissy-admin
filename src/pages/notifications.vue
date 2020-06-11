@@ -119,31 +119,32 @@ export default {
 
                 console.log(details,'details user')
                 if(details.position == 'Admin'){
-                    console.log(this.$lodash.orderBy(this.returnNotifsWithTypes,'dateTime','desc'),'types')
-                    // return this.$lodash.orderBy(this.returnNotifsWithTypes,'dateTime','desc')
+                    console.log(this.$lodash.orderBy(this.returnNotifsWithTypes,a=>{
+                        return new Date(a.dateTime)
+                    },'desc'),'admin')
                     return this.$lodash.orderBy(this.returnNotifsWithTypes,a=>{
-                        return this.$moment(a.dateTime).toString()
+                        return new Date(a.dateTime)
                     },'desc') 
                 } else if(details.position == 'Staff' || details.position == 'Delivery Boy'){
                     let filter = this.returnNotifsWithTypes.filter(a=>{
                         return a.typeOf == 'schedule' && a.staffKey == user.uid
                     })
-                    console.log(this.$lodash.orderBy(filter,'dateTime','desc'),'types')
                     return this.$lodash.orderBy(filter,a=>{
-                        return this.$moment(a.dateTime).toString()
+                        return new Date(a.dateTime)
                     },'desc') 
                 } else {
                     let filter = this.returnNotifsWithTypes.filter(a=>{
                         return a.typeOf != 'schedule' || a.typeOf != 'status'
                     })     
                     return this.$lodash.orderBy(filter,a=>{
-                        return this.$moment(a.dateTime).toString()
+                        return new Date(a.dateTime)
                     },'desc')               
                 }
 
                 
                 return ''
             } catch (error) {
+                console.log(error,'error sa return')
                 return []
             }
         },
@@ -158,7 +159,11 @@ export default {
                     return {...a,...this.returnDataOfNotifs('order',a.reservationKey)}
                 } else if (a.message.includes('Payment')){
                     a.typeOf = 'payment'
-                    a.clientName = this.returnCustomerData(a.userID).displayName
+                    if(a.userID == 'WALK-IN'){
+                        a.clientName = 'WALK-IN'
+                    } else {
+                        a.clientName = this.returnCustomerData(a.userID).displayName
+                    }
                     return {...a,...this.returnDataOfNotifs('payment',a.paymentKey)}
                 } else if (a.message.includes('Schedule')){
                     a.typeOf = 'schedule'
@@ -173,6 +178,7 @@ export default {
                 
                 return notifs
             } catch (error) {
+                console.log(error,'notif with types')
                 return []
             }
         }
@@ -218,7 +224,8 @@ export default {
                     return a['.key'] == key
                 })[0]
             } catch (error) {
-                return []
+                console.log(error,'returnCustomerData')
+                return {}
             }
         },
         returnUserPosition(){

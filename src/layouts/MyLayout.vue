@@ -476,7 +476,11 @@ export default {
                     return {...a,...this.returnDataOfNotifs('order',a.reservationKey)}
                 } else if (a.message.includes('Payment')){
                     a.typeOf = 'payment'
-                    a.clientName = this.returnCustomerData(a.userID).displayName
+                    if(a.userID == 'WALK-IN'){
+                        a.clientName = 'WALK-IN'
+                    } else {
+                        a.clientName = this.returnCustomerData(a.userID).displayName
+                    }
                     return {...a,...this.returnDataOfNotifs('payment',a.paymentKey)}
                 } else if (a.message.includes('Schedule')){
                     a.typeOf = 'schedule'
