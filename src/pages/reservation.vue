@@ -57,7 +57,7 @@
                                                 </q-item-section>
                                             </q-item>
 
-                                            <q-item class="q-mt-sm" v-show="props.row.clientSelectPackage.type != 'CUSTOMIZE'">
+                                            <!-- <q-item class="q-mt-sm" v-show="props.row.clientSelectPackage.type != 'CUSTOMIZE'">
                                             <span class="full-width text-weight-bold " >INCLUSIONS</span>
                                             </q-item>
                                             <q-item v-for="(price, index) in props.row.clientSelectPackage.inclusions" :key="index" class="column items-center">
@@ -87,7 +87,7 @@
                                                 <q-item-section >
                                                 <q-item-label>{{prices.servicesQty}}x {{ prices.services }}</q-item-label>
                                                 </q-item-section>
-                                            </q-item>
+                                            </q-item> -->
                                         </q-list>
                                         <q-separator  inset class="q-mt-sm" />
                                         <q-card-actions align="center">
@@ -112,7 +112,7 @@
                         </q-input>
                     </div>
                     <div class="q-mx-lg" >
-                        <q-table grid :data="returnClientFinishReservations" :columns="columnss" :rows-per-page-options="[0]" hide-bottom :filter="filter_com"  :pagination.sync="paginations" class="q-px-sm full-width align-center ">
+                        <q-table grid :data="returnClientReservations" :columns="columnss" :rows-per-page-options="[0]" hide-bottom :filter="filter_com"  :pagination.sync="paginations" class="q-px-sm full-width align-center ">
                             <template v-slot:item="props">
                                 <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-4 grid-style-transition " :style="props.selected ? 'transform: scale(0.95);' : ''">
                                     <q-card class="my-card"  style="border-radius:20px" >
@@ -152,7 +152,7 @@
                                                 </q-item-section>
                                             </q-item>
 
-                                            <q-item class="q-mt-sm" v-show="props.row.clientSelectPackage.type != 'CUSTOMIZE'">
+                                            <!-- <q-item class="q-mt-sm" v-show="props.row.clientSelectPackage.type != 'CUSTOMIZE'">
                                             <span class="full-width text-weight-bold " >INCLUSIONS</span>
                                             </q-item>
                                             <q-item v-for="(price, index) in props.row.clientSelectPackage.inclusions" :key="index" class="column items-center">
@@ -182,7 +182,7 @@
                                                 <q-item-section >
                                                 <q-item-label>{{prices.servicesQty}}x {{ prices.services }}</q-item-label>
                                                 </q-item-section>
-                                            </q-item>
+                                            </q-item> -->
                                         </q-list>
                                         <q-separator  inset class="q-mt-sm" />
                                         <q-card-actions align="center">
@@ -594,11 +594,15 @@ export default {
     },
     computed: {
         returnClientReservations(){
-          return this.$lodash.filter(this.Reservation,a=>{return date.formatDate(a.clientReserveDate, 'YYYY/MM/DD') >= date.formatDate(new Date(), 'YYYY/MM/DD')})
+          if(this.reservationtab === 'pending_res'){
+              return this.$lodash.filter(this.Reservation,a=>{return date.formatDate(a.clientReserveDate, 'YYYY/MM/DD') >= date.formatDate(new Date(), 'YYYY/MM/DD')})
+          }else{
+              return this.$lodash.filter(this.Reservation,a=>{return date.formatDate(a.clientReserveDate, 'YYYY/MM/DD') < date.formatDate(new Date(), 'YYYY/MM/DD')})
+          }
       },
-      returnClientFinishReservations(){
-          return this.$lodash.filter(this.Reservation,a=>{return date.formatDate(a.clientReserveDate, 'YYYY/MM/DD') < date.formatDate(new Date(), 'YYYY/MM/DD')})
-      },
+    //   returnClientFinishReservations(){
+    //       return this.$lodash.filter(this.Reservation,a=>{return date.formatDate(a.clientReserveDate, 'YYYY/MM/DD') < date.formatDate(new Date(), 'YYYY/MM/DD')})
+    //   },
         currentBalance(){
             try {
                 let totalpack =  parseInt(this.selectedReservation.clientTotalPayment) - parseInt(this.selectedReservation.clientPaidAmount)
