@@ -511,7 +511,11 @@ export default {
             console.log('position return',details.position)
             
             if(details.position == 'Admin'){
-              return true
+              if(linkText == 'Staff Dashboard'){
+                return false
+              } else {
+                return true
+              }
             } else if (details.position == 'Secretary'){
               if(linkText == 'User Management'){
                 return false
