@@ -1587,7 +1587,13 @@ export default {
         let today = new Date()
         let today1week = date.addToDate(today,{days: 6})
         let format = date.formatDate(today1week,'YYYY/MM/DD')
-        if(format < dates){
+        let today1month = date.addToDate(today,{month: 1})
+        let formatMonth = date.formatDate(today1month,'YYYY/MM/DD')
+
+        let basisToClose = eventToConsider == 'Debut' || eventToConsider == 'Wedding' ? formatMonth : format
+
+
+        if(basisToClose < dates){
             let eventsBase = []
             let length = 0
 
