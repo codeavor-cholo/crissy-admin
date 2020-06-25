@@ -360,6 +360,7 @@ export default {
         { icon: 'mdi-calendar', text: 'Reservation' },
         { icon: 'update', text: 'Event Status' },
         { icon: 'update', text: 'Staff Dashboard' },
+        { icon: 'update', text: 'Reschedule Events' },
         { icon: 'cancel', text: 'Cancelled Events' },
         { icon: 'supervised_user_circle', text: 'User Management' },
         { icon: 'event_note', text: 'Event Staff Scheduling' },
@@ -549,8 +550,9 @@ export default {
             } else if(party[0].text == 'User Management') {
                 this.$router.push('/users')  
             } else if(party[0].text == 'Event Staff Scheduling') {
-
                 this.$router.push('/staffscheduling')
+            } else if(party[0].text == 'Reschedule Events') {
+                this.$router.push('/reschedule')
             } else if(party[0].text == 'Sales Reports') {
                 this.$router.push('/reports')    
             } else if(party[0].text == 'Most Popular Choices') {

@@ -23,6 +23,7 @@ const routes = [
       { path: '/createpackage', meta: {requiredAuth: true}, name: 'extras', component: () => import('pages/createPackage.vue') },
       { path: '/theme', meta: {requiredAuth: true}, name: 'theme', component: () => import('pages/theme.vue') },
       { path: '/status', meta: {requiredAuth: true}, name: 'status', component: () => import('pages/status.vue') },
+      { path: '/reschedule', meta: {requiredAuth: true}, name: 'reschedule', component: () => import('pages/reschedule.vue') },
       { path: '/users', meta: {requiredAuth: true}, name: 'users', component: () => import('pages/users.vue') },
       { path: '/staffscheduling', meta: {requiredAuth: true}, name: 'staffscheduling', component: () => import('pages/staffScheduling.vue') },
       { path: '/reports', meta: {requiredAuth: true}, name: 'reports', component: () => import('pages/reports.vue') },
