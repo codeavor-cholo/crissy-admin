@@ -33,6 +33,8 @@ exports.newNotification = functions.firestore.document('{collection}/{id}').onCr
             let dateObject = {dateTime: moment().toString(),message: 'New Schedule Created'}
             let object = {...newData,...dateObject}
             return adminNotifs.add(object)
+        } else if(collection === 'Reschedule'){
+            return adminNotifs.add({userID: newData.clientUID ?  newData.clientUID : '',clientName: newData.clientFName+' '+newData.clientLName,message: 'Rescheduled Reservation of'+  newData.clientFName+' '+newData.clientLName,dateTime: moment(today).toString(), reservationKey: id})
         } else if(collection === 'EventStatus'){
             return clientNotifs.add({reservationKey: newData.reservationKey,dateTime: newData.dateTime,status:newData.status})
             .then(()=>{

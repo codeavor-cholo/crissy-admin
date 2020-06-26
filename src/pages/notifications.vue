@@ -5,10 +5,22 @@
         </div>
         <div id="list">
             <q-list separator>
-                <div v-for="notif in returnUserNotifications" :key="notif['.key']">
+                <div v-for="(notif,i) in returnUserNotifications" :key="notif['.key']+i">
                 <q-item clickable v-ripple v-if="notif.typeOf == 'reserve'">
                     <q-item-section>
                         <div id="newreserve" class="text-weight-medium">New Reservation Created</div>
+                        <div class="column q-py-sm">
+                            <q-item-label class="text-orange-8" caption>{{notif.clientName}}</q-item-label>
+                            <q-item-label class="text-orange-8" caption>{{notif.clientReserveDate}}</q-item-label>
+                            <q-item-label class="text-orange-8" caption>{{notif.clientStartTime}} - {{notif.clientEndTime}}</q-item-label>
+                            <q-item-label class="text-orange-8" caption>{{notif.clientPlace}}, {{notif.clientCity}}</q-item-label> 
+                        </div>
+                        <q-item-label class="text-teal text-overline text-right">{{$moment(notif.dateTime).fromNow()}}</q-item-label>
+                    </q-item-section>
+                </q-item>
+                <q-item clickable v-ripple v-if="notif.typeOf == 'resched'">
+                    <q-item-section>
+                        <div id="newreserve" class="text-weight-medium">Reschedule Event Application</div>
                         <div class="column q-py-sm">
                             <q-item-label class="text-orange-8" caption>{{notif.clientName}}</q-item-label>
                             <q-item-label class="text-orange-8" caption>{{notif.clientReserveDate}}</q-item-label>
@@ -85,7 +97,8 @@ export default {
             Payments: [],
             StaffSchedules: [],
             Customers: [],
-            userPosition: ''
+            userPosition: '',
+            Reschedule: []
         }
     },
     created(){
@@ -107,6 +120,7 @@ export default {
         this.$binding('Payments', this.$firestoreApp.collection('Payments')),
         this.$binding('StaffSchedules', this.$firestoreApp.collection('StaffSchedules')),
         this.$binding('Customers', this.$firestoreApp.collection('Customers'))
+        this.$binding('Reschedule', this.$firestoreApp.collection('Reschedule'))
     },
     computed:{
         returnUserNotifications(){
@@ -121,7 +135,7 @@ export default {
                 if(details.position == 'Admin'){
                     console.log(this.$lodash.orderBy(this.returnNotifsWithTypes,a=>{
                         return new Date(a.dateTime)
-                    },'desc'),'admin')
+                    },'desc'),'admin Notifs')
                     return this.$lodash.orderBy(this.returnNotifsWithTypes,a=>{
                         return new Date(a.dateTime)
                     },'desc') 
@@ -152,8 +166,14 @@ export default {
             try {
                 let notifs = this.AdminNotifications.map(a=>{
                 if(a.message.includes('Reservation')){
-                    a.typeOf = 'reserve'
-                    return {...a,...this.returnDataOfNotifs('reserve',a.reservationKey)}
+                    if(a.message.includes('Reschedule')){
+                        a.typeOf = 'resched'
+                        return {...a,...this.returnDataOfNotifs('resched',a.reservationKey)}                        
+                    } else {
+                        a.typeOf = 'reserve'
+                        return {...a,...this.returnDataOfNotifs('reserve',a.reservationKey)}
+                    }
+
                 } else if (a.message.includes('Order')) {
                     a.typeOf = 'order'
                     return {...a,...this.returnDataOfNotifs('order',a.reservationKey)}
@@ -187,11 +207,18 @@ export default {
         returnDataOfNotifs(typeOf,key){
             try {
                 if(typeOf == 'reserve'){
+                    console.log(this.Reservation.filter(a=>{
+                        return a['.key'] == key
+                    })[0],'get reserve')
                     return this.Reservation.filter(a=>{
                         return a['.key'] == key
                     })[0]
                 } else if(typeOf == 'order'){
                     return this.partyTrayOrders.filter(a=>{
+                        return a['.key'] == key
+                    })[0]
+                } else if(typeOf == 'resched'){
+                    return this.Reschedule.filter(a=>{
                         return a['.key'] == key
                     })[0]
                 } else if(typeOf == 'payment'){
@@ -215,6 +242,7 @@ export default {
                     })[0]
                 }
             } catch (error) {
+                console.log(error,'returnDataOfNotifs')
                 return []
             }
         },
