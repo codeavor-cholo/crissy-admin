@@ -561,7 +561,7 @@ export default {
             paginations: { sortBy: 'clientReserveDate', descending: true, page: 1, rowsPerPage: 100},
             columns: [
                 { name: 'clientFName', required: true, label: 'First Name', align: 'center', field: 'clientFName', sortable: true },
-                { name: 'clientLName', align: 'center', label: 'LastName', field: 'clientLName', sortable: true },
+                { name: 'clientLName', align: 'center', label: 'Last Name', field: 'clientLName', sortable: true },
             ],
             columnss: [
                 { name: 'clientFName', required: true, label: 'First Name', align: 'center', field: 'clientFName', sortable: true },
